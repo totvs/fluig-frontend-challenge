@@ -28,8 +28,9 @@ Criar um aplicativo de Lista de Tarefas de acordo com o [**protótipo disponibil
 - Acessibilidade.
 
 #### Submissão
-Existem duas maneiras de nos enviar sua solução.
-A primeira é simplesmente criar um arquivo .zip do diretório do projeto e nos enviar por e-mail com o assunto "Frontend Challenge Fluig", e como alternativa, você pode seguir o fluxo de trabalho do GitHub Fork/PR bifurcando este repositório, enviando suas alterações e abra um pull-request para nós.
+- Dê um fork nesse repositório;
+- Implemente a solução, commitando suas alterações;
+- Abra um pull-request para esse repositório para enviar seu projeto.
 
 #### Links Úteis
 - Protótipo: https://www.figma.com/file/RH2L8XnE5h4HikUh43Mvd1/Frontend-Challenge-Fluig?type=design&node-id=0-1&mode=design&t=RbsEW01QIyn90WeO-0
