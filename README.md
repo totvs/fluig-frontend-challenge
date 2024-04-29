@@ -35,3 +35,5 @@ Criar um aplicativo de Lista de Tarefas de acordo com o [**protótipo disponibil
 #### Links Úteis
 - Protótipo: https://www.figma.com/file/RH2L8XnE5h4HikUh43Mvd1/Frontend-Challenge-Fluig?type=design&node-id=0-1&mode=design&t=RbsEW01QIyn90WeO-0
 - json-server: https://www.npmjs.com/package/json-server
+
+Caso precise de mais informações, envie uma mensagem para rodolfo.vito@totvs.com.br.
