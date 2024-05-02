@@ -1,0 +1,26 @@
+{
+  "name": "fluig-frontend-challenge",
+  "version": "1.0.0",
+  "description": "O desafio de aplicativo de Lista de Tarefas",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.5.2",
+    "sass": "^1.76.0",
+    "vitest": "^1.5.2"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "vite": "^5.2.10"
+  }
+}
