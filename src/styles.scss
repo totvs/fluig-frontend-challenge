@@ -1,0 +1,50 @@
+@use "sass:map";
+
+$theme-colors: (
+  "primary": #7B61FF,
+  "danger": #CD3636,
+  "success": #3CBF26,
+);
+
+@import "bootstrap/scss/bootstrap";
+
+body {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.task-list-column {
+  width: 300px;
+}
+
+.btn-primary {
+  color: white;
+  &:hover, &:focus, &:focus-visible, &:active, &:visited  {
+    color: white !important;
+  }
+}
+
+.btn-light {
+  color: map.get($theme-colors, "primary");
+  background-color: #EBE5FC;
+  font-weight: 600;
+  &:hover, &:focus, &:focus-visible, &:active, &:visited {
+    color: map.get($theme-colors, "primary") !important;
+    background-color: #EBE5FC !important;
+    filter: brightness(98%);
+    transition: 0.2s;
+    border: 1px solid transparent;
+  }
+  &:focus {
+    border-color: #e4dcfb;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(93, 13, 253, 0.25);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
