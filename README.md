@@ -1,5 +1,15 @@
 ### Desafio Front-end
 
+#### Ambiente de Desenvolvimento
+Para rodar local use o script para rodar o servidor do Front:
+```bash
+npm run dev
+```
+Para rodar o Mock da API rode o script:
+```bash
+npm run mock-api
+```
+
 #### O desafio
 Criar um aplicativo de Lista de Tarefas de acordo com o [**protótipo disponibilizado**](https://www.figma.com/file/RH2L8XnE5h4HikUh43Mvd1/Frontend-Challenge-Fluig?type=design&node-id=0-1&mode=design&t=RbsEW01QIyn90WeO-0), que permite criar, editar, e remover tarefas, e alterar o status de cada tarefa (A fazer, Fazendo, Concluído).
 
