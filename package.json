@@ -9,13 +9,16 @@
     "coverage": "vitest run --coverage",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "mock-api": "json-server --watch tasks.json --port 4000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@vitest/coverage-v8": "^1.5.2",
+    "jsdom": "^24.0.0",
+    "json-server": "^1.0.0-alpha.23",
     "sass": "^1.76.0",
     "vitest": "^1.5.2"
   },
