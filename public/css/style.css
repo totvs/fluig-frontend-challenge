@@ -1,0 +1,86 @@
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.container {
+  max-width: 1440px;
+}
+
+.title {
+  color: #7B61FF;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 17px;
+  color: #6C757D;
+}
+.subtitle h2 {
+  font-size: 17px;
+}
+
+.btn-primary {
+  background: #7B61FF;
+  color: #fff;
+}
+
+.btn-primary.btn-soft {
+  background: #EBE5FC;
+  border-color: #EBE5FC;
+  color: #6610F2;
+  font-weight: 600;
+}
+
+.custom-gap {
+  gap: 125px;
+}
+
+.custom-min-width {
+  min-width: 300px;
+}
+
+.list-group {
+  margin-top: 16px;
+  padding: 0;
+  border: 0;
+}
+
+.list-group-item:not(last-item) {
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.card-footer-text {
+  font-size: 12px;
+}
+
+.toast {
+  background: #7749F8;
+  color: #fff;
+}
+
+.card-button {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+}
+.card {
+  transition: all .3s ease;
+}
+.card-button:hover .card {
+  border-color: #6610F2;
+}

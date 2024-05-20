@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List App</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <main class="container">
+    <header class="d-flex flex-wrap justify-content-center align-items-center py-3 mb-4">
+      <section class="me-auto">
+        <h1 class="title">Meu Quadro</h1>
+      </section>
+
+      <section class="p-2" id="busca">
+        <form class="input-group mb-3" id="formulario-busca" onsubmit="return false;">
+          <input
+            type="text"
+            class="form-control"
+            id="formulario-busca-entrada"
+            placeholder="Pesquisar"
+            aria-label="Pesquisar"
+            aria-describedby="search-button"
+          />
+          <button
+            class="btn btn-outline-secondary btn-primary btn-lg d-flex align-items-center gap-2"
+            type="submit"
+            aria-label="Buscar"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true"> search </span>
+            Buscar
+          </button>
+        </form>
+      </section>
+    </header>
+
+    <article class="row custom-gap" id="quadro">
+
+      <section class="col custom-min-width" id="coluna-a-fazer">
+        <header class="mb-1 d-flex align-items-center subtitle">
+          <h2 id="coluna-a-fazer-titulo" class="m-0 p-1">
+            A fazer
+          </h2>
+          (<span id="coluna-a-fazer-contador"></span>)
+        </header>
+        <div class="d-grid gap-2 mb-3">
+          <button
+            class="btn btn-primary btn-soft"
+            type="button"
+            aria-label="Adicionar nova tarefa coluna a fazer"
+            id="coluna-a-fazer-nova-tarefa"
+            data-bs-toggle="modal"
+            data-bs-target="#tarefaModal"
+            data-status="0"
+          >
+            Nova tarefa
+          </button>
+        </div>
+        <ul id="coluna-a-fazer-lista-items" class="list-unstyled">
+
+        </ul>
+      </section>
+
+      <section class="col custom-min-width" id="coluna-fazendo">
+        <header class="mb-1 d-flex align-items-center subtitle">
+          <h2 id="coluna-fazendo-titulo" class="m-0 p-1">
+            Fazendo
+          </h2>
+          (<span id="coluna-fazendo-contador"></span>)
+        </header>
+        <div class="d-grid gap-2 mb-3">
+          <button
+            class="btn btn-primary btn-soft"
+            type="button"
+            aria-label="Adicionar nova tarefa coluna a fazer"
+            id="coluna-fazendo-nova-tarefa"
+            data-bs-toggle="modal"
+            data-bs-target="#tarefaModal"
+            data-status="1"
+          >
+            Nova tarefa
+          </button>
+        </div>
+        <ul id="coluna-fazendo-lista-items" class="list-unstyled">
+
+        </ul>
+      </section>
+
+      <section class="col custom-min-width" id="coluna-concluido">
+        <header class="mb-1 d-flex align-items-center subtitle">
+          <h2 id="coluna-concluido-titulo" class="m-0 p-1">
+            Concluído
+          </h2>
+          (<span id="coluna-concluido-contador"></span>)
+        </header>
+        <div class="d-grid gap-2 mb-3">
+          <button
+            class="btn btn-primary btn-soft"
+            type="button"
+            aria-label="Adicionar nova tarefa coluna a fazer"
+            id="coluna-concluido-nova-tarefa"
+            data-bs-toggle="modal"
+            data-bs-target="#tarefaModal"
+            data-status="2"
+          >
+            Nova tarefa
+          </button>
+        </div>
+        <ul id="coluna-concluido-lista-items" class="list-unstyled">
+
+        </ul>
+      </section>
+
+    </article>
+
+    <!-- Modal -->
+    <div class="modal fade modal-lg" id="tarefaModal" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="tituloModal">Modal title</h1>
+            <button type="button" id="fecharModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <form class="row needs-validation" id="tarefa-formulario" novalidate>
+            <div class="modal-body">
+              <div class="d-flex flex-column px-4">
+                <input type="hidden" id="tarefa-id-form">
+                <input type="hidden" id="tarefa-criacao-data-form">
+                <input type="hidden" id="tarefa-ultima-alteracao-form">
+                <div class="mb-3 col-5">
+                  <select class="form-select" id="tarefa-status-form" aria-label="Seleciona o status da tarefa">
+                    <option value="0">A Fazer</option>
+                    <option value="1">Fazendo</option>
+                    <option value="2">Concluído</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <input type="text" class="form-control form-control-custom" id="tarefa-titulo-form" placeholder="Insira o nome da tarefa" required>
+                  <div class="invalid-feedback">
+                    Campo obrigatório
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="tarefa-habilitar-prazo">
+                    <label class="form-check-label" for="tarefa-habilitar-prazo">Habilitar prazo</label>
+                  </div>
+                </div>
+
+                <div class="mb-3 col-5">
+                  <input id="tarefa-data-limite-form" class="form-control" type="date" />
+                  <div class="invalid-feedback">
+                    Campo obrigatório
+                  </div>
+                </div>
+
+                <div>
+                  <textarea class="form-control" placeholder="Insira uma descrição" id="tarefa-descricao-form" style="height: 100px"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer px-4">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-botao-excluir-cancelar"></button>
+              <button type="submit" class="btn btn-primary" id="modal-botao-salvar-atualizar">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body" id="toast-body-text">
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

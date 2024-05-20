@@ -1,0 +1,27 @@
+{
+  "name": "fluig-frontend-challenge",
+  "version": "1.0.0",
+  "description": "#### O desafio Criar um aplicativo de Lista de Tarefas de acordo com o [**protótipo disponibilizado**](https://www.figma.com/file/RH2L8XnE5h4HikUh43Mvd1/Frontend-Challenge-Fluig?type=design&node-id=0-1&mode=design&t=RbsEW01QIyn90WeO-0), que permite criar, editar, e remover tarefas, e alterar o status de cada tarefa (A fazer, Fazendo, Concluído).",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:server": "json-server --watch tasks.json --port 3000",
+    "start:client": "live-server public",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "lint": "eslint public/js/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.3.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "globals": "^15.3.0",
+    "json-server": "^1.0.0-beta.0",
+    "live-server": "^1.2.2"
+  }
+}
