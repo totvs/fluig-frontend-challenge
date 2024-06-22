@@ -1,16 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Todo List</title>
-</head>
-<body>
-  <div class="container py-4 px-3 mx-auto">
-    <h1>Hello, Bootstrap and Webpack!</h1>
-    <button class="btn btn-primary">Primary button</button>
-  </div>
-  <app-card title="To Do List" onclick=></app-card>
-  <counter-component></counter-component>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+  </head>
+  <body>
+    <div class="container text-center">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Meu quadro</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="me-auto"></div>
+            <form class="d-flex" role="search">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Pesquisar..."
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-success" type="submit">
+                Buscar
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <div class="row">
+        <div class="col">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary mb-4">
+              A fazer <span class="badge text-bg-secondary">4</span>
+            </button>
+          </div>
+          <div class="mb-3">
+            <app-task-card
+              title="Incluir notas do primeiro Trimestre"
+              description="Notas com problemas"
+              collumnParkingDays="10"
+              onclick=""
+            ></app-task-card>
+          </div>
+          <div class="mb-3">
+            <app-task-card
+              title="Incluir notas do primeiro Trimestre"
+              description="Notas com problemas"
+              collumnParkingDays="10"
+              onclick=""
+            ></app-task-card>
+          </div>
+          <div class="mb-3">
+            <app-task-card
+              title="Incluir notas do primeiro Trimestre"
+              description="Notas com problemas"
+              collumnParkingDays="10"
+              onclick=""
+            ></app-task-card>
+          </div>
+        </div>
+        <div class="col">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary mb-4">
+              Fazendo <span class="badge text-bg-secondary">4</span>
+            </button>
+          </div>
+          <div class="mb-3">
+            <app-task-card
+              title="Incluir notas do primeiro Trimestre"
+              description="Notas com problemas"
+              collumnParkingDays="10"
+              onclick=""
+            ></app-task-card>
+          </div>
+          <app-modal-component></app-modal-component>
+        </div>
+        <div class="col">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary mb-4">
+              Concluído <span class="badge text-bg-secondary">4</span>
+            </button>
+          </div>
+          <div class="mb-3">
+            <app-task-card
+              title="Incluir notas do primeiro Trimestre"
+              description="Notas com problemas"
+              collumnParkingDays="10"
+              onclick=""
+            ></app-task-card>
+          </div>
+          <counter-component></counter-component>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
