@@ -6,10 +6,6 @@ class Modal extends HTMLElement {
     const titleProperty = this.getAttribute("title");
 
     const template = `
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-      </button>
-
       <div class="modal fade text-start" id="addTask" tabindex="-1" aria-labelledby="add task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
