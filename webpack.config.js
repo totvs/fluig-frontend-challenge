@@ -2,28 +2,30 @@
 
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
 const isProduction = process.env.NODE_ENV == "production";
-
-const stylesHandler = MiniCssExtractPlugin.loader;
+const autoprefixer = require("autoprefixer");
 
 const config = {
-  entry: ["./src/CounterComponent.js", "./src/CardComponent.js"],
+  entry: [
+    "./src/CounterComponent.js",
+    "./src/CardComponent.js",
+    "./src/bootstrap.js",
+  ],
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
   devServer: {
+    static: path.resolve(__dirname, "dist"),
+    port: 8080,
     open: true,
     host: "localhost",
+    hot: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "index.html",
+      template: "./src/index.html",
     }),
-
-    new MiniCssExtractPlugin(),
 
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
@@ -41,8 +43,30 @@ const config = {
         },
       },
       {
-        test: /\.css$/i,
-        use: [stylesHandler, "css-loader"],
+        test: /\.(scss)$/,
+        use: [
+          {
+            // Adds CSS to the DOM by injecting a `<style>` tag
+            loader: "style-loader",
+          },
+          {
+            // Interprets `@import` and `url()` like `import/require()` and will resolve them
+            loader: "css-loader",
+          },
+          {
+            // Loader for webpack to process CSS with PostCSS
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [autoprefixer],
+              },
+            },
+          },
+          {
+            // Loads a SASS/SCSS file and compiles it to CSS
+            loader: "sass-loader",
+          },
+        ],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
