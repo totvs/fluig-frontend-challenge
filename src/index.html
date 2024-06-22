@@ -40,7 +40,7 @@
       <div class="row">
         <div class="col">
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-primary mb-4">
+            <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addTask">
               A fazer <span class="badge text-bg-secondary">4</span>
             </button>
           </div>
@@ -71,7 +71,7 @@
         </div>
         <div class="col">
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-primary mb-4">
+            <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addTask">
               Fazendo <span class="badge text-bg-secondary">4</span>
             </button>
           </div>
@@ -83,11 +83,10 @@
               onclick=""
             ></app-task-card>
           </div>
-          <app-modal-component></app-modal-component>
         </div>
         <div class="col">
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-primary mb-4">
+            <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#addTask">
               Concluído <span class="badge text-bg-secondary">4</span>
             </button>
           </div>
@@ -102,6 +101,7 @@
           <counter-component></counter-component>
         </div>
       </div>
+      <app-modal-component title="Nova tarefa"></app-modal-component>
     </div>
   </body>
 </html>
