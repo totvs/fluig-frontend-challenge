@@ -63,8 +63,6 @@ class Modal extends HTMLElement {
         status: formData.get("task-status"),
       };
 
-      console.log(task);
-
       this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
 
       form.reset();

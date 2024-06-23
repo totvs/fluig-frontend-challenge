@@ -44,6 +44,12 @@ export const getTask = async (id) => {
   return task;
 };
 
+const resetTaskContainerMaker = () => {
+  const tasksContainer = document.querySelector(".task-container-make");
+  tasksContainer.textContent = "";
+  return true;
+};
+
 const renderTasks = async () => {
   const tasks = await getTasks();
   const tasksContainer = document.querySelector(".task-container-make");
@@ -70,7 +76,7 @@ export const bootstrapApp = async () => {
   formAppModalComponent.addEventListener("formSubmitted", async (event) => {
     const task = event.detail;
     await addTask(task);
-    await renderTasks();
+    if (resetTaskContainerMaker()) await renderTasks();
   });
 };
 
