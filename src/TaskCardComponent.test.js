@@ -8,12 +8,19 @@ describe("TaskCardComponent", () => {
   let taskCardComponent;
 
   beforeEach(() => {
-    document.body.innerHTML = `<app-task-card
-        title='Title test' 
-        description='Description test' 
-        collumnParkingDays='10'>
-      </app-task-card>`;
-    taskCardComponent = document.querySelector("app-task-card");
+    // document.body.innerHTML = `<app-task-card
+    //     title='Title test'
+    //     description='Description test'
+    //     collumnParkingDays='10'>
+    //   </app-task-card>`;
+
+    const appTaskCard = document.createElement("app-task-card");
+    appTaskCard.setAttribute("title", "Title test");
+    appTaskCard.setAttribute("description", "Description test");
+    appTaskCard.setAttribute("collumn-parking-days", "10");
+    document.body.appendChild(appTaskCard);
+
+    taskCardComponent = document.body.querySelector("app-task-card");
   });
 
   afterEach(() => {
@@ -21,18 +28,20 @@ describe("TaskCardComponent", () => {
   });
 
   test("should render a title text", () => {
-    const titleContainer = taskCardComponent.querySelector(".card-title");
+    const titleContainer =
+      taskCardComponent.shadowRoot.querySelector(".card-title");
     expect(titleContainer.textContent).toBe("Title test");
   });
 
   test("should render a description text", () => {
-    const descriptionContainer = taskCardComponent.querySelector(".card-text");
+    const descriptionContainer =
+      taskCardComponent.shadowRoot.querySelector(".card-text");
     expect(descriptionContainer.textContent).toBe("Description test");
   });
 
   test("should render a collumnParkingDays text", () => {
     const collumnParkingDaysContainer =
-      taskCardComponent.getElementsByTagName("small")[0];
+      taskCardComponent.shadowRoot.querySelectorAll(".card-text")[1];
     expect(collumnParkingDaysContainer.textContent).toBe(
       "10 dias nessa coluna"
     );
