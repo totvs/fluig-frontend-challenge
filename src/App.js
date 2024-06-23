@@ -1,3 +1,8 @@
+// Import all of Bootstrap's JS
+import * as bootstrap from "bootstrap";
+
+let taskId;
+
 export const getTasks = async () => {
   const response = await fetch(
     "http://localhost:3000/tasks?_sort=title&_order=asc"
@@ -63,6 +68,21 @@ const renderTasks = async () => {
     taskElement.setAttribute("collumn-parking-days", task.collumnParkingDays);
     taskElement.setAttribute("status", task.status);
     taskElement.setAttribute("id", task.id);
+    taskElement.addEventListener("clickOnTaskCard", async (event) => {
+      taskId = event.detail.id;
+      const taskName = event.detail.title;
+      const taskDescription = event.detail.description;
+
+      const formAppModalComponent = document.querySelector(
+        "app-modal-component"
+      );
+      formAppModalComponent.openModal(taskName, taskDescription);
+
+      // var modalElement = document.getElementById("addTask");
+
+      // const bootstrapModal = new bootstrap.Modal(modalElement);
+      // bootstrapModal.show();
+    });
 
     taskElementWrapper.appendChild(taskElement);
     tasksContainer.appendChild(taskElementWrapper);
@@ -73,6 +93,11 @@ export const bootstrapApp = async () => {
   await renderTasks();
 
   const formAppModalComponent = document.querySelector("app-modal-component");
+  formAppModalComponent.addEventListener("excludeTask", async (event) => {
+    await deleteTask(taskId);
+    if (resetTaskContainerMaker()) await renderTasks();
+  });
+
   formAppModalComponent.addEventListener("formSubmitted", async (event) => {
     const task = event.detail;
     await addTask(task);

@@ -5,6 +5,7 @@ class TaskCardComponent extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this.cardContainer = document.createElement("div");
     this.cardContainer.className = "card";
+    this.cardContainer.style.cursor = "pointer";
 
     this.cardBodyContainer = document.createElement("div");
     this.cardBodyContainer.className = "card-body";
@@ -31,6 +32,21 @@ class TaskCardComponent extends HTMLElement {
     this.cardBodyContainer.appendChild(this.paragraphContainer);
     this.cardBodyContainer.appendChild(this.collumnParkingDaysContainer);
     this.shadowRoot.append(this.cardContainer, this.styleLink);
+
+    this.cardContainer.addEventListener("click", () => {
+      const event = new CustomEvent("clickOnTaskCard", {
+        composed: true,
+        bubbles: true,
+        detail: {
+          id: this.getAttribute("id"),
+          title: this.getAttribute("title"),
+          description: this.getAttribute("description"),
+          collumnParkingDays: this.getAttribute("collumn-parking-days"),
+          status: this.getAttribute("status"),
+        },
+      });
+      this.dispatchEvent(event);
+    });
   }
 
   connectedCallback() {
@@ -42,15 +58,15 @@ class TaskCardComponent extends HTMLElement {
     this.collumnParkingDaysContainer.textContent = `${collumnParkingDays} dia${collumnParkingDays > 1 ? "s" : ""} nessa coluna`;
   }
 
-  // attributeChangedCallback(name, oldValue, newValue) {
-  //   if (name === "title") {
-  //     this.h5Container.textContent = newValue;
-  //   } else if (name === "description") {
-  //     this.paragraphContainer.textContent = newValue;
-  //   } else if (name === "collumn-parking-days") {
-  //     this.collumnParkingDaysContainer.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
-  //   }
-  // }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "title") {
+      this.h5Container.textContent = newValue;
+    } else if (name === "description") {
+      this.paragraphContainer.textContent = newValue;
+    } else if (name === "collumn-parking-days") {
+      this.collumnParkingDaysContainer.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
+    }
+  }
 }
 
 customElements.define("app-task-card", TaskCardComponent);
