@@ -45,14 +45,14 @@ export const getTask = async (id) => {
 };
 
 const resetTaskContainerMaker = () => {
-  const tasksContainer = document.querySelector(".task-container-make");
+  const tasksContainer = document.querySelector(".task-container-to-do");
   tasksContainer.textContent = "";
   return true;
 };
 
 const renderTasks = async () => {
   const tasks = await getTasks();
-  const tasksContainer = document.querySelector(".task-container-make");
+  const tasksContainer = document.querySelector(".task-container-to-do");
   tasks.forEach((task) => {
     const taskElementWrapper = document.createElement("div");
     taskElementWrapper.className = "mb-3 text-start";

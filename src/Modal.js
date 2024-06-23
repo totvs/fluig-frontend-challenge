@@ -2,7 +2,7 @@ class Modal extends HTMLElement {
   constructor() {
     super();
 
-    this.isVisible = true;
+    this.disabledTaskDueDate = false;
     const titleProperty = this.getAttribute("title");
 
     const template = `
@@ -16,25 +16,38 @@ class Modal extends HTMLElement {
             <div class="modal-body">
               <form class="add-task">
                 <div class="mb-3">
-                  <select name="task-status" class="form-select" aria-label="Default select example">
+                  <select name="task-status" class="form-select" aria-label="Select status">
                     <option value="1">A fazer</option>
                     <option value="2">Fazendo</option>
                     <option value="3">Concluído</option>
                   </select>
                 </div>
-                <div>
-                  <div class="form-check form-switch form-switch-lg">
-                    <input class="form-check-input" type="checkbox" role="switch" id="enableDueDate">
+                <div class="mb-3">
+                  <div class="form-check form-switch form-switch-lg enable-due-date">
+                    <input class="form-check-input" type="checkbox" role="switch">
                     <label class="form-check-label" for="enableDueDate">Habilitar prazo</label>
+                  </div>
+                  <div class="mb-3 w-75">
+                    <label for="taskDueDate" class="col-form-label">Prazo:</label>
+                    <input name="task-due-date" class="form-control task-due-date-input" type="text" role="taskDueDate" placeholder="dd/mm/aaaa" autocomplete="off">
+                    <div class="invalid-feedback">
+                      Preencha o prazo da tarefa.
+                    </div>
                   </div>
                 </div>
                 <div class="mb-3">
                   <label for="task-name" class="col-form-label">Task name:</label>
                   <input name="task-name" type="text" class="form-control">
+                  <div class="invalid-feedback">
+                    Preencha o nome da tarefa.
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label for="description-text" class="col-form-label">Description:</label>
-                  <textarea name="task-description" class="form-control"></textarea>
+                  <textarea name="task-description" class="form-control" style="height: 100px"></textarea>
+                  <div class="invalid-feedback">
+                    Preencha a descrição da tarefa.
+                  </div>
                 </div>
               </form>
             </div>
@@ -47,6 +60,63 @@ class Modal extends HTMLElement {
       </div>`;
 
     this.innerHTML = template;
+
+    taskDueDateInput = this.querySelector(".task-due-date-input");
+    taskDueDateInput.setAttribute("disabled", "disabled");
+
+    const enableDueDate = this.querySelector(".enable-due-date");
+    enableDueDate.addEventListener("click", () => {
+      this.disabledTaskDueDate = !this.disabledTaskDueDate;
+
+      if (this.disabledTaskDueDate) {
+        taskDueDateInput.removeAttribute("disabled");
+        return;
+      }
+      taskDueDateInput.setAttribute("disabled", "disabled");
+    });
+  }
+
+  validateForm(formData) {
+    let fieldValidate = false;
+
+    if (
+      this.disabledTaskDueDate &&
+      formData.get("task-due-date").trim() === ""
+    ) {
+      const statusInput = this.querySelector("input[name=task-due-date]");
+      statusInput.classList.add("is-invalid");
+      fieldValidate = false;
+    } else if (!this.disabledTaskDueDate) {
+      const statusInput = this.querySelector("input[name=task-due-date]");
+      statusInput.classList.remove("is-invalid");
+      fieldValidate = true;
+    }
+
+    if (formData.get("task-name").trim() === "") {
+      const nameInput = this.querySelector("input[name=task-name]");
+      nameInput.classList.add("is-invalid");
+      fieldValidate = false;
+    } else {
+      const nameInput = this.querySelector("input[name=task-name]");
+      nameInput.classList.remove("is-invalid");
+      fieldValidate = true;
+    }
+
+    if (formData.get("task-description").trim() === "") {
+      const descriptionInput = this.querySelector(
+        "textarea[name=task-description]"
+      );
+      descriptionInput.classList.add("is-invalid");
+      fieldValidate = false;
+    } else {
+      const descriptionInput = this.querySelector(
+        "textarea[name=task-description]"
+      );
+      descriptionInput.classList.remove("is-invalid");
+      fieldValidate = true;
+    }
+
+    return fieldValidate;
   }
 
   connectedCallback() {
@@ -56,9 +126,17 @@ class Modal extends HTMLElement {
       event.preventDefault();
 
       const formData = new FormData(form);
+
+      if (!this.validateForm(formData)) {
+        return;
+      }
+
+      console.log("AQUI");
+
       const task = {
         title: formData.get("task-name"),
         description: formData.get("task-description"),
+        created_date: formData.get("task-due-date"),
         collumnParkingDays: formData.get("task-collumn-parking-days"),
         status: formData.get("task-status"),
       };
@@ -67,6 +145,11 @@ class Modal extends HTMLElement {
 
       form.reset();
     });
+  }
+
+  disconnectedCallback() {
+    this.querySelector(".save-button").removeEventListener("click");
+    this.querySelector(".enable-due-date").removeEventListener("click");
   }
 }
 
