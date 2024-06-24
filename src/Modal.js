@@ -157,6 +157,21 @@ class Modal extends HTMLElement {
 
       form.reset();
     });
+
+    const selectTaskStatus = this.querySelector("select[name=task-status]");
+    selectTaskStatus.addEventListener("change", (event) => {
+      const selectedTaskStatusEvent = new CustomEvent(
+        "selectedTaskStatusEvent",
+        {
+          composed: true,
+          bubbles: true,
+          detail: {
+            status: event.target.value,
+          },
+        }
+      );
+      this.dispatchEvent(selectedTaskStatusEvent);
+    });
   }
 
   disconnectedCallback() {
