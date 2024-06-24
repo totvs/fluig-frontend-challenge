@@ -56,9 +56,13 @@ const resetTaskContainerMaker = () => {
 };
 
 const renderTasks = async () => {
+  let toDoList = [];
   const tasks = await getTasks();
-  const tasksContainer = document.querySelector(".task-container-to-do");
-  tasks.forEach((task) => {
+  toDoList = [...toDoList, ...tasks];
+
+  const todoListContainer = document.querySelector(".task-container-to-do");
+
+  toDoList.forEach((task) => {
     const taskElementWrapper = document.createElement("div");
     taskElementWrapper.className = "mb-3 text-start";
 
@@ -85,7 +89,7 @@ const renderTasks = async () => {
     });
 
     taskElementWrapper.appendChild(taskElement);
-    tasksContainer.appendChild(taskElementWrapper);
+    todoListContainer.appendChild(taskElementWrapper);
   });
 };
 
@@ -97,6 +101,13 @@ export const bootstrapApp = async () => {
     await deleteTask(taskId);
     if (resetTaskContainerMaker()) await renderTasks();
   });
+
+  formAppModalComponent.addEventListener(
+    "selectedTaskStatusEvent",
+    async (event) => {
+      const status = event.detail.status;
+    }
+  );
 
   formAppModalComponent.addEventListener("formSubmitted", async (event) => {
     const task = event.detail;
