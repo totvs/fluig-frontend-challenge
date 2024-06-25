@@ -146,6 +146,7 @@ export const bootstrapApp = async () => {
   formAppModalComponent.addEventListener("excludeTask", async (event) => {
     await deleteTask(taskId);
     if (resetTaskContainerMaker()) await renderTasks();
+    
   });
 
   formAppModalComponent.addEventListener(

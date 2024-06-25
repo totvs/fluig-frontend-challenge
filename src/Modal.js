@@ -7,8 +7,6 @@ class Modal extends HTMLElement {
 
     this.disabledTaskDueDate = true;
     this._taskId;
-    this._taskName;
-    this._taskDescription;
     this._taskDueDate;
 
     const titleProperty = this.getAttribute("title");
@@ -73,6 +71,13 @@ class Modal extends HTMLElement {
       "textarea[name=task-description]"
     );
 
+    this.closeButton = this.querySelector(".btn-close");
+    this.closeButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      this.resetFullForm();
+      this.dispatchEvent(new CustomEvent("closeModal"));
+    });
+
     this.taskDueDateInput = this.querySelector("date-input");
     this.taskDueDateInput.addEventListener(
       "dateInputChanged",
@@ -91,12 +96,19 @@ class Modal extends HTMLElement {
     );
   }
 
+  resetFullForm() {
+    this.descriptionField.textContent = "";
+    this.form.reset();
+    this.taskDueDateInput.setAttribute("value", "");
+    this.taskDueDateInput.setAttribute("disabled", "disabled");
+    this.taskDueDateSwitch.checked = false;
+
+    this._taskId = null;
+    this._taskDueDate = "";
+    this.disabledTaskDueDate = true;
+  }
+
   handleOnClickTaskDueDateSwitch() {
-    console.log(
-      "handleOnClickTaskDueDateSwitch>>>",
-      this._taskDueDate,
-      this.disabledTaskDueDate
-    );
     if (this._taskDueDate && !this.disabledTaskDueDate) {
       this.taskDueDateInput.setAttribute("value", "");
       this._taskDueDate = "";
@@ -143,18 +155,13 @@ class Modal extends HTMLElement {
     const task = {
       title: formData.get("task-name"),
       description: formData.get("task-description"),
-      created_date: this._taskDueDate?.trim(),
+      created_date: new Date().toISOString(),
       status: parseInt(formData.get("task-status")) || 0,
-      deadline_date: this._taskDueDate?.trim(),
+      deadline_date: this._taskDueDate?.trim() || "",
       last_status_update_date: new Date().toISOString(),
     };
 
     this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
-
-    if (!this._taskId) {
-      this.form.reset();
-      this.taskDueDateInput.setAttribute("value", "");
-    }
   }
 
   connectedCallback() {
@@ -163,6 +170,7 @@ class Modal extends HTMLElement {
     this.excludeButton = this.querySelector(".exclude-button");
     this.excludeButton.addEventListener("click", (event) => {
       event.preventDefault();
+      this.resetFullForm();
       this.dispatchEvent(new CustomEvent("excludeTask"));
     });
 
@@ -221,14 +229,6 @@ class Modal extends HTMLElement {
     this.descriptionField.textContent = taskDescription;
     this.setTaskDueDate(deadlineDate);
     new bootstrap.Modal(this.querySelector("#addTask")).show();
-  }
-
-  get tagName() {
-    return this._taskName;
-  }
-
-  set tagName(value) {
-    this._taskName = value;
   }
 }
 
