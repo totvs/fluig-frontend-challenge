@@ -8,12 +8,6 @@ describe("TaskCardComponent", () => {
   let taskCardComponent;
 
   beforeEach(() => {
-    // document.body.innerHTML = `<app-task-card
-    //     title='Title test'
-    //     description='Description test'
-    //     collumnParkingDays='10'>
-    //   </app-task-card>`;
-
     const appTaskCard = document.createElement("app-task-card");
     appTaskCard.setAttribute("title", "Title test");
     appTaskCard.setAttribute("description", "Description test");

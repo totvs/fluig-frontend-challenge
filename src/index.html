@@ -41,13 +41,14 @@
       <div class="row">
         <div class="col">
           <div class="d-grid gap-2">
+            <p class="mb-0 text-start">A fazer <span class="total-todo-tasks-text">(4)</span></p>
             <button
               type="button"
               class="btn btn-primary mb-4"
               data-bs-toggle="modal"
               data-bs-target="#addTask"
             >
-              A fazer <span class="badge text-bg-secondary">4</span>
+              Nova tarefa
             </button>
           </div>
           <!-- task-container-make -->
@@ -56,44 +57,35 @@
         </div>
         <div class="col">
           <div class="d-grid gap-2">
+            <p class="mb-0 text-start">Fazendo <span class="total-doing-tasks-text">(4)</span></p>
             <button
               type="button"
               class="btn btn-primary mb-4"
               data-bs-toggle="modal"
               data-bs-target="#addTask"
             >
-              Fazendo <span class="badge text-bg-secondary">4</span>
+              Nova tarefa
             </button>
           </div>
-          <div class="mb-3">
-            <app-task-card
-              title="Incluir notas do primeiro Trimestre"
-              description="Notas com problemas"
-              collumnParkingDays="10"
-              onclick=""
-            ></app-task-card>
-          </div>
+          <!-- task-container-doing -->
+          <div class="task-container-doing"></div>
+          <!-- task-container-doing -->
         </div>
         <div class="col">
           <div class="d-grid gap-2">
+            <p class="mb-0 text-start">Concluído <span class="total-completed-tasks-text">(4)</span></p>
             <button
               type="button"
               class="btn btn-primary mb-4"
               data-bs-toggle="modal"
               data-bs-target="#addTask"
             >
-              Concluído <span class="badge text-bg-secondary">4</span>
+              Nova tarefa
             </button>
           </div>
-          <div class="mb-3">
-            <app-task-card
-              title="Incluir notas do primeiro Trimestre"
-              description="Notas com problemas"
-              collumnParkingDays="10"
-              onclick=""
-            ></app-task-card>
-          </div>
-          <counter-component></counter-component>
+          <!-- task-container-done -->
+          <div class="task-container-done"></div>
+          <!-- task-container-done -->
         </div>
       </div>
       <app-modal-component title="Nova tarefa"></app-modal-component>

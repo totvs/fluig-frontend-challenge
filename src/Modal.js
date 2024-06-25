@@ -1,10 +1,11 @@
 import * as bootstrap from "bootstrap";
+import "./DateInput.js";
 
 class Modal extends HTMLElement {
   constructor() {
     super();
 
-    this.disabledTaskDueDate = false;
+    this.disabledTaskDueDate = true;
     this._taskName = "";
     this._taskDescription = "";
     this._taskDueDate = "";
@@ -23,19 +24,19 @@ class Modal extends HTMLElement {
               <form class="add-task">
                 <div class="mb-3">
                   <select name="task-status" class="form-select" aria-label="Select status">
-                    <option value="1">A fazer</option>
-                    <option value="2">Fazendo</option>
-                    <option value="3">Concluído</option>
+                    <option value="0">A fazer</option>
+                    <option value="1">Fazendo</option>
+                    <option value="2">Concluído</option>
                   </select>
                 </div>
                 <div class="mb-3">
-                  <div class="form-check form-switch form-switch-lg enable-due-date">
-                    <input class="form-check-input" type="checkbox" role="switch">
+                  <div class="form-check form-switch form-switch-lg">
+                    <input name="enable-due-date" class="form-check-input" type="checkbox" role="switch">
                     <label class="form-check-label" for="enableDueDate">Habilitar prazo</label>
                   </div>
                   <div class="mb-3 w-75">
                     <label for="taskDueDate" class="col-form-label">Prazo:</label>
-                    <input name="task-due-date" class="form-control task-due-date-input" type="text" role="taskDueDate" placeholder="dd/mm/aaaa" autocomplete="off">
+                    <date-input name="task-due-date" placeholder="dd/mm/aaaa" disabled></date-input>
                     <div class="invalid-feedback">
                       Preencha o prazo da tarefa.
                     </div>
@@ -66,36 +67,42 @@ class Modal extends HTMLElement {
       </div>`;
 
     this.innerHTML = template;
-
     this.taskNameField = this.querySelector("input[name=task-name]");
-    this.taskDueDateInput = this.querySelector(".task-due-date-input");
-    this.taskDueDateInput.setAttribute("disabled", "disabled");
-
-    const enableDueDate = this.querySelector(".enable-due-date");
-    enableDueDate.addEventListener("click", () => {
-      this.disabledTaskDueDate = !this.disabledTaskDueDate;
-
-      if (this.disabledTaskDueDate) {
-        this.taskDueDateInput.removeAttribute("disabled");
-        return;
+    this.taskDueDateInput = this.querySelector("date-input");
+    this.taskDueDateInput.addEventListener(
+      "dateInputChanged",
+      async (event) => {
+        const date = event.detail.value;
+        this._taskDueDate = date;
       }
+    );
+
+    this.enableDueDateSwitch = this.querySelector(
+      "input[name=enable-due-date]"
+    );
+    this.enableDueDateSwitch.addEventListener(
+      "click",
+      this.handleOnClickEnableDueDate.bind(this)
+    );
+  }
+
+  handleOnClickEnableDueDate() {
+    this.disabledTaskDueDate = !this.disabledTaskDueDate;
+    if (this.disabledTaskDueDate) {
       this.taskDueDateInput.setAttribute("disabled", "disabled");
-    });
+    } else {
+      this.taskDueDateInput.removeAttribute("disabled");
+    }
   }
 
   validateForm(formData) {
     let fieldValidate = false;
 
-    if (
-      this.disabledTaskDueDate &&
-      formData.get("task-due-date").trim() === ""
-    ) {
-      const statusInput = this.querySelector("input[name=task-due-date]");
-      statusInput.classList.add("is-invalid");
+    if (!this.disabledTaskDueDate && this._taskDueDate.trim() == "") {
+      this.taskDueDateInput.setAttribute("valid", "false");
       fieldValidate = false;
-    } else if (!this.disabledTaskDueDate) {
-      const statusInput = this.querySelector("input[name=task-due-date]");
-      statusInput.classList.remove("is-invalid");
+    } else {
+      this.taskDueDateInput.setAttribute("valid", "true");
       fieldValidate = true;
     }
 
@@ -126,37 +133,45 @@ class Modal extends HTMLElement {
     return fieldValidate;
   }
 
-  connectedCallback() {
-    const form = this.querySelector(".add-task");
+  handleOnClickSaveButton(event) {
+    event.preventDefault();
 
-    const excludeButton = this.querySelector(".exclude-button");
-    excludeButton.addEventListener("click", (event) => {
+    const formData = new FormData(form);
+
+    if (!this.validateForm(formData)) {
+      return;
+    }
+
+    const task = {
+      id: crypto.randomUUID(),
+      title: formData.get("task-name"),
+      description: formData.get("task-description"),
+      created_date: this._taskDueDate.trim(),
+      status: parseInt(formData.get("task-status")) || 0,
+      deadline_date: this._taskDueDate.trim(),
+      last_status_update_date: new Date().toISOString(),
+    };
+
+    this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
+
+    this.form.reset();
+    this.taskDueDateInput.setAttribute("value", "");
+  }
+
+  connectedCallback() {
+    this.form = this.querySelector(".add-task");
+
+    this.excludeButton = this.querySelector(".exclude-button");
+    this.excludeButton.addEventListener("click", (event) => {
       event.preventDefault();
       this.dispatchEvent(new CustomEvent("excludeTask"));
     });
 
-    const saveButton = this.querySelector(".save-button");
-    saveButton.addEventListener("click", (event) => {
-      event.preventDefault();
-
-      const formData = new FormData(form);
-
-      if (!this.validateForm(formData)) {
-        return;
-      }
-
-      const task = {
-        title: formData.get("task-name"),
-        description: formData.get("task-description"),
-        created_date: formData.get("task-due-date"),
-        collumnParkingDays: formData.get("task-collumn-parking-days"),
-        status: formData.get("task-status"),
-      };
-
-      this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
-
-      form.reset();
-    });
+    this.saveButton = this.querySelector(".save-button");
+    this.saveButton.addEventListener(
+      "click",
+      this.handleOnClickSaveButton.bind(this)
+    );
 
     const selectTaskStatus = this.querySelector("select[name=task-status]");
     selectTaskStatus.addEventListener("change", (event) => {
@@ -175,8 +190,14 @@ class Modal extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.querySelector(".save-button").removeEventListener("click");
-    this.querySelector(".enable-due-date").removeEventListener("click");
+    this.saveButton.removeEventListener(
+      "click",
+      this.handleOnClickSaveButton.bind(this)
+    );
+    this.enableDueDateSwitch.removeEventListener(
+      "click",
+      this.handleOnClickEnableDueDate.bind(this)
+    );
   }
 
   openModal(taskName, taskDescription) {

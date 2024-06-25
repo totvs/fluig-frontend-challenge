@@ -7,10 +7,8 @@ const autoprefixer = require("autoprefixer");
 
 const config = {
   entry: [
-    "./src/CounterComponent.js",
     "./src/TaskCardComponent.js",
     "./src/bootstrap.js",
-    "./src/BootstrapCar.js",
     "./src/Modal.js",
     "./src/App.js",
   ],

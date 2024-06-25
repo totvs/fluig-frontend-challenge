@@ -32,21 +32,21 @@ class TaskCardComponent extends HTMLElement {
     this.cardBodyContainer.appendChild(this.paragraphContainer);
     this.cardBodyContainer.appendChild(this.collumnParkingDaysContainer);
     this.shadowRoot.append(this.cardContainer, this.styleLink);
+  }
 
-    this.cardContainer.addEventListener("click", () => {
-      const event = new CustomEvent("clickOnTaskCard", {
-        composed: true,
-        bubbles: true,
-        detail: {
-          id: this.getAttribute("id"),
-          title: this.getAttribute("title"),
-          description: this.getAttribute("description"),
-          collumnParkingDays: this.getAttribute("collumn-parking-days"),
-          status: this.getAttribute("status"),
-        },
-      });
-      this.dispatchEvent(event);
+  handleCardClick() {
+    const event = new CustomEvent("clickOnTaskCard", {
+      composed: true,
+      bubbles: true,
+      detail: {
+        id: this.getAttribute("id"),
+        title: this.getAttribute("title"),
+        description: this.getAttribute("description"),
+        collumnParkingDays: this.getAttribute("collumn-parking-days"),
+        status: this.getAttribute("status"),
+      },
     });
+    this.dispatchEvent(event);
   }
 
   connectedCallback() {
@@ -56,6 +56,17 @@ class TaskCardComponent extends HTMLElement {
     this.h5Container.textContent = title;
     this.paragraphContainer.textContent = description;
     this.collumnParkingDaysContainer.textContent = `${collumnParkingDays} dia${collumnParkingDays > 1 ? "s" : ""} nessa coluna`;
+    this.cardContainer.addEventListener(
+      "click",
+      this.handleCardClick.bind(this)
+    );
+  }
+
+  disconnectedCallback() {
+    this.cardContainer.removeEventListener(
+      "click",
+      this.handleCardClick.bind(this)
+    );
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

@@ -55,42 +55,81 @@ const resetTaskContainerMaker = () => {
   return true;
 };
 
+const moveTask = async (id) => {
+  const task = await getTask(id);
+  const updatedTask = {
+    ...task,
+    status: id,
+  };
+  await updateTask(updatedTask);
+};
+
+const createTaskCard = (task) => {
+  const taskElement = document.createElement("app-task-card");
+  taskElement.setAttribute("title", task.title);
+  taskElement.setAttribute("description", task.description);
+  taskElement.setAttribute("collumn-parking-days", task.collumnParkingDays);
+  taskElement.setAttribute("status", task.status);
+  taskElement.setAttribute("id", task.id);
+  taskElement.addEventListener("clickOnTaskCard", async (event) => {
+    taskId = event.detail.id;
+    const taskName = event.detail.title;
+    const taskDescription = event.detail.description;
+
+    const formAppModalComponent = document.querySelector("app-modal-component");
+    formAppModalComponent.openModal(taskName, taskDescription);
+  });
+
+  const taskElementWrapper = document.createElement("div");
+  taskElementWrapper.className = "mb-3 text-start";
+  taskElementWrapper.appendChild(taskElement);
+  return taskElementWrapper;
+};
+
 const renderTasks = async () => {
   let toDoList = [];
+  let doingList = [];
+  let doneList = [];
+
   const tasks = await getTasks();
-  toDoList = [...toDoList, ...tasks];
+  tasks.forEach((task) => {
+    const card = createTaskCard(task);
+    if (task.status === 0) {
+      toDoList.push(card);
+    } else if (task.status === 1) {
+      doingList.push(card);
+    } else if (task.status === 2) {
+      doneList.push(card);
+    }
+  });
 
   const todoListContainer = document.querySelector(".task-container-to-do");
-
-  toDoList.forEach((task) => {
-    const taskElementWrapper = document.createElement("div");
-    taskElementWrapper.className = "mb-3 text-start";
-
-    const taskElement = document.createElement("app-task-card");
-    taskElement.setAttribute("title", task.title);
-    taskElement.setAttribute("description", task.description);
-    taskElement.setAttribute("collumn-parking-days", task.collumnParkingDays);
-    taskElement.setAttribute("status", task.status);
-    taskElement.setAttribute("id", task.id);
-    taskElement.addEventListener("clickOnTaskCard", async (event) => {
-      taskId = event.detail.id;
-      const taskName = event.detail.title;
-      const taskDescription = event.detail.description;
-
-      const formAppModalComponent = document.querySelector(
-        "app-modal-component"
-      );
-      formAppModalComponent.openModal(taskName, taskDescription);
-
-      // var modalElement = document.getElementById("addTask");
-
-      // const bootstrapModal = new bootstrap.Modal(modalElement);
-      // bootstrapModal.show();
-    });
-
-    taskElementWrapper.appendChild(taskElement);
-    todoListContainer.appendChild(taskElementWrapper);
+  const doingListContainer = document.querySelector(".task-container-doing");
+  const doneListContainer = document.querySelector(".task-container-done");
+  toDoList.forEach((card) => {
+    todoListContainer.appendChild(card);
   });
+  doingList.forEach((card) => {
+    doingListContainer.appendChild(card);
+  });
+  doneList.forEach((card) => {
+    doneListContainer.appendChild(card);
+  });
+
+  const totalTodoTasksTextContainer = document.querySelector(
+    ".total-todo-tasks-text"
+  );
+  totalTodoTasksTextContainer.textContent = `(${toDoList.length})`;
+
+  const totalDoingTasksTextContainer = document.querySelector(
+    ".total-doing-tasks-text"
+  );
+  totalDoingTasksTextContainer.textContent = `(${doingList.length})`;
+
+  const totalCompletedTasksTextContainer = document.querySelector(
+    ".total-completed-tasks-text"
+  );
+  totalCompletedTasksTextContainer.textContent = `(${doneList.length})`;
 };
 
 export const bootstrapApp = async () => {
