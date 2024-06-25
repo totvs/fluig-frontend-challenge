@@ -6,12 +6,14 @@ import "./TaskCardComponent.js";
 
 describe("TaskCardComponent", () => {
   let taskCardComponent;
+  let appTaskCard;
 
   beforeEach(() => {
-    const appTaskCard = document.createElement("app-task-card");
+    appTaskCard = document.createElement("app-task-card");
     appTaskCard.setAttribute("title", "Title test");
     appTaskCard.setAttribute("description", "Description test");
-    appTaskCard.setAttribute("collumn-parking-days", "10");
+    appTaskCard.setAttribute("deadline", "2024-06-25T17:00:28.175Z");
+    appTaskCard.setAttribute("parking-days-at-collumn", 10);
     document.body.appendChild(appTaskCard);
 
     taskCardComponent = document.body.querySelector("app-task-card");
@@ -27,17 +29,35 @@ describe("TaskCardComponent", () => {
     expect(titleContainer.textContent).toBe("Title test");
   });
 
+  test("should render a new title text", () => {
+    appTaskCard.setAttribute("title", "new Title test");
+    const titleContainer =
+      taskCardComponent.shadowRoot.querySelector(".card-title");
+    expect(titleContainer.textContent).toBe("new Title test");
+  });
+
   test("should render a description text", () => {
     const descriptionContainer =
       taskCardComponent.shadowRoot.querySelector(".card-text");
     expect(descriptionContainer.textContent).toBe("Description test");
   });
 
-  test("should render a collumnParkingDays text", () => {
-    const collumnParkingDaysContainer =
-      taskCardComponent.shadowRoot.querySelectorAll(".card-text")[1];
-    expect(collumnParkingDaysContainer.textContent).toBe(
-      "10 dias nessa coluna"
-    );
+  test("should render a new description text", () => {
+    appTaskCard.setAttribute("description", "new Description test");
+    const descriptionContainer =
+      taskCardComponent.shadowRoot.querySelector(".card-text");
+    expect(descriptionContainer.textContent).toBe("new Description test");
+  });
+
+  test("should render a parking-days-at-collumn text", () => {
+    const parkingDaysAtCollumn =
+      taskCardComponent.shadowRoot.querySelectorAll("small")[0];
+    expect(parkingDaysAtCollumn.textContent).toBe("10 dias nessa coluna");
+  });
+
+  test("should render a deadline text", () => {
+    const deadlineContainer =
+      taskCardComponent.shadowRoot.querySelectorAll("small")[1];
+    expect(deadlineContainer.textContent).toBe("Expira hoje");
   });
 });

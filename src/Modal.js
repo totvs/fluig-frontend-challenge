@@ -136,7 +136,7 @@ class Modal extends HTMLElement {
   handleOnClickSaveButton(event) {
     event.preventDefault();
 
-    const formData = new FormData(form);
+    const formData = new FormData(this.form);
 
     if (!this.validateForm(formData)) {
       return;

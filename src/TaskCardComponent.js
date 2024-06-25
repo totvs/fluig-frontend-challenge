@@ -1,8 +1,19 @@
 class TaskCardComponent extends HTMLElement {
+  static get observedAttributes() {
+    return ["title", "description", "deadline", "parking-days-at-collumn"];
+  }
+
   constructor() {
     super();
 
     this.attachShadow({ mode: "open" });
+
+    this._idProp;
+    this._titleProp;
+    this._descriptionProp;
+    this._parkingDaysAtCollumn;
+    this._deadlineProps;
+
     this.cardContainer = document.createElement("div");
     this.cardContainer.className = "card";
     this.cardContainer.style.cursor = "pointer";
@@ -16,12 +27,24 @@ class TaskCardComponent extends HTMLElement {
     this.paragraphContainer = document.createElement("p");
     this.paragraphContainer.className = "card-text text-secondary";
 
-    this.collumnParkingDaysContainer = document.createElement("p");
-    this.collumnParkingDaysContainer.className = "card-text";
+    this.wrapperTextRow = document.createElement("div");
+    this.wrapperTextRow.className = "d-flex justify-content-between";
 
-    this.smallContainer = document.createElement("small");
-    this.smallContainer.className = "text-secondary";
-    this.collumnParkingDaysContainer.appendChild(this.smallContainer);
+    this.parkingDaysTextParagraph = document.createElement("p");
+    this.parkingDaysTextParagraph.className = "card-text m-0";
+    this.smallParkingDaysSmallText = document.createElement("small");
+    this.smallParkingDaysSmallText.className = "text-secondary";
+    this.parkingDaysTextParagraph.appendChild(this.smallParkingDaysSmallText);
+
+    this.deadlineTextParagraph = document.createElement("p");
+    this.deadlineTextParagraph.className = "card-text m-0";
+
+    this.deadlineSmallText = document.createElement("small");
+    this.deadlineSmallText.className = "text-secondary";
+    this.deadlineTextParagraph.appendChild(this.deadlineSmallText);
+
+    this.wrapperTextRow.appendChild(this.parkingDaysTextParagraph);
+    this.wrapperTextRow.appendChild(this.deadlineTextParagraph);
 
     this.styleLink = document.createElement("link");
     this.styleLink.rel = "stylesheet";
@@ -31,7 +54,7 @@ class TaskCardComponent extends HTMLElement {
     this.cardContainer.appendChild(this.cardBodyContainer);
     this.cardBodyContainer.appendChild(this.h5Container);
     this.cardBodyContainer.appendChild(this.paragraphContainer);
-    this.cardBodyContainer.appendChild(this.collumnParkingDaysContainer);
+    this.cardBodyContainer.appendChild(this.wrapperTextRow);
     this.shadowRoot.append(this.cardContainer, this.styleLink);
   }
 
@@ -40,23 +63,50 @@ class TaskCardComponent extends HTMLElement {
       composed: true,
       bubbles: true,
       detail: {
-        id: this.getAttribute("id"),
-        title: this.getAttribute("title"),
-        description: this.getAttribute("description"),
-        collumnParkingDays: this.getAttribute("collumn-parking-days"),
-        status: this.getAttribute("status"),
+        id: this._idProp,
+        title: this._titleProp,
+        description: this._descriptionProp,
+        parkingDaysAtCollumn: this._parkingDaysAtCollumn,
+        status: this._statusProp,
       },
     });
     this.dispatchEvent(event);
   }
 
+  getDaysSinceExpired(date) {
+    const deadline = new Date(date);
+    const now = new Date();
+    const diffTimeInMilliseconds = deadline - now;
+    const minutes = 1000 * 60;
+    const hours = minutes * 60;
+    const days = hours * 24;
+    const diffDays = Math.ceil(diffTimeInMilliseconds / days);
+    return diffDays;
+  }
+
   connectedCallback() {
-    const title = this.getAttribute("title");
-    const description = this.getAttribute("description");
-    const collumnParkingDays = this.getAttribute("collumn-parking-days");
-    this.h5Container.textContent = title;
-    this.paragraphContainer.textContent = description;
-    this.smallContainer.textContent = `${collumnParkingDays} dia${collumnParkingDays > 1 ? "s" : ""} nessa coluna`;
+    this._titleProp = this.getAttribute("title");
+    this._descriptionProp = this.getAttribute("description");
+    this._parkingDaysAtCollumn = this.getAttribute("parking-days-at-collumn");
+    this._deadlineProps = this.getAttribute("deadline");
+
+    this.h5Container.textContent = this._titleProp;
+    this.paragraphContainer.textContent = this._descriptionProp;
+
+    const parkingDaysAtCollumn = this._parkingDaysAtCollumn;
+    const deadlineDays = this.getDaysSinceExpired(this._deadlineProps);
+    if (deadlineDays < 0) {
+      this.deadlineSmallText.textContent = `Expirou a ${Math.abs(deadlineDays)} dia${Math.abs(deadlineDays) > 1 ? "s" : ""}`;
+      this.deadlineSmallText.classList.add("text-danger");
+    } else if (deadlineDays > 0) {
+      this.deadlineSmallText.textContent = `${deadlineDays} dia${deadlineDays > 1 ? "s" : ""} restantes`;
+      this.deadlineSmallText.classList.add("text-success");
+    } else if (deadlineDays === 0) {
+      this.deadlineSmallText.textContent = "Expira hoje";
+      this.deadlineSmallText.classList.add("text-warning");
+    }
+
+    this.smallParkingDaysSmallText.textContent = `${parkingDaysAtCollumn} dia${parkingDaysAtCollumn > 1 ? "s" : ""} nessa coluna`;
     this.cardContainer.addEventListener(
       "click",
       this.handleCardClick.bind(this)
@@ -75,8 +125,10 @@ class TaskCardComponent extends HTMLElement {
       this.h5Container.textContent = newValue;
     } else if (name === "description") {
       this.paragraphContainer.textContent = newValue;
-    } else if (name === "collumn-parking-days") {
-      this.collumnParkingDaysContainer.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
+    } else if (name === "parking-days-at-collumn") {
+      this.smallParkingDaysSmallText.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
+    } else if (name === "deadline") {
+      this.deadlineSmallText.textContent = `${this.getDaysSinceExpired(newValue)} dia${this.getDaysSinceExpired(newValue) > 1 ? "s" : ""} restantes`;
     }
   }
 }

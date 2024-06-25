@@ -68,7 +68,8 @@ const createTaskCard = (task) => {
   const taskElement = document.createElement("app-task-card");
   taskElement.setAttribute("title", task.title);
   taskElement.setAttribute("description", task.description);
-  taskElement.setAttribute("collumn-parking-days", 2);
+  taskElement.setAttribute("deadline", task.deadline_date);
+  taskElement.setAttribute("parking-day-at-collumn", 2);
   taskElement.setAttribute("status", task.status);
   taskElement.setAttribute("id", task.id);
   taskElement.addEventListener("clickOnTaskCard", async (event) => {
