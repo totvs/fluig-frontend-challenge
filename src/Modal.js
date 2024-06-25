@@ -6,13 +6,14 @@ class Modal extends HTMLElement {
     super();
 
     this.disabledTaskDueDate = true;
-    this._taskName = "";
-    this._taskDescription = "";
-    this._taskDueDate = "";
+    this._taskId;
+    this._taskName;
+    this._taskDescription;
+    this._taskDueDate;
 
     const titleProperty = this.getAttribute("title");
 
-    const template = `
+    const modalTemplate = `
       <div class="modal fade text-start" id="addTask" tabindex="-1" aria-labelledby="add task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -31,7 +32,7 @@ class Modal extends HTMLElement {
                 </div>
                 <div class="mb-3">
                   <div class="form-check form-switch form-switch-lg">
-                    <input name="enable-due-date" class="form-check-input" type="checkbox" role="switch">
+                    <input name="task-due-date-switch" class="form-check-input" type="checkbox" role="switch">
                     <label class="form-check-label" for="enableDueDate">Habilitar prazo</label>
                   </div>
                   <div class="mb-3 w-75">
@@ -66,8 +67,12 @@ class Modal extends HTMLElement {
         </div>
       </div>`;
 
-    this.innerHTML = template;
+    this.innerHTML = modalTemplate;
     this.taskNameField = this.querySelector("input[name=task-name]");
+    this.descriptionField = this.querySelector(
+      "textarea[name=task-description]"
+    );
+
     this.taskDueDateInput = this.querySelector("date-input");
     this.taskDueDateInput.addEventListener(
       "dateInputChanged",
@@ -77,17 +82,28 @@ class Modal extends HTMLElement {
       }
     );
 
-    this.enableDueDateSwitch = this.querySelector(
-      "input[name=enable-due-date]"
+    this.taskDueDateSwitch = this.querySelector(
+      "input[name=task-due-date-switch]"
     );
-    this.enableDueDateSwitch.addEventListener(
+    this.taskDueDateSwitch.addEventListener(
       "click",
-      this.handleOnClickEnableDueDate.bind(this)
+      this.handleOnClickTaskDueDateSwitch.bind(this)
     );
   }
 
-  handleOnClickEnableDueDate() {
+  handleOnClickTaskDueDateSwitch() {
+    console.log(
+      "handleOnClickTaskDueDateSwitch>>>",
+      this._taskDueDate,
+      this.disabledTaskDueDate
+    );
+    if (this._taskDueDate && !this.disabledTaskDueDate) {
+      this.taskDueDateInput.setAttribute("value", "");
+      this._taskDueDate = "";
+    }
+
     this.disabledTaskDueDate = !this.disabledTaskDueDate;
+
     if (this.disabledTaskDueDate) {
       this.taskDueDateInput.setAttribute("disabled", "disabled");
     } else {
@@ -96,41 +112,23 @@ class Modal extends HTMLElement {
   }
 
   validateForm(formData) {
-    let fieldValidate = false;
-
-    if (!this.disabledTaskDueDate && this._taskDueDate.trim() == "") {
+    if (!this.disabledTaskDueDate && this._taskDueDate?.trim() == "") {
       this.taskDueDateInput.setAttribute("valid", "false");
-      fieldValidate = false;
-    } else {
-      this.taskDueDateInput.setAttribute("valid", "true");
-      fieldValidate = true;
-    }
-
-    if (formData.get("task-name").trim() === "") {
-      const nameInput = this.querySelector("input[name=task-name]");
+      return false;
+    } else if (formData.get("task-name").trim() === "") {
+      const nameInput = this.taskNameField;
       nameInput.classList.add("is-invalid");
-      fieldValidate = false;
-    } else {
-      const nameInput = this.querySelector("input[name=task-name]");
-      nameInput.classList.remove("is-invalid");
-      fieldValidate = true;
-    }
-
-    if (formData.get("task-description").trim() === "") {
-      const descriptionInput = this.querySelector(
-        "textarea[name=task-description]"
-      );
+      return false;
+    } else if (formData.get("task-description").trim() === "") {
+      const descriptionInput = this.descriptionField;
       descriptionInput.classList.add("is-invalid");
-      fieldValidate = false;
-    } else {
-      const descriptionInput = this.querySelector(
-        "textarea[name=task-description]"
-      );
-      descriptionInput.classList.remove("is-invalid");
-      fieldValidate = true;
+      return false;
     }
 
-    return fieldValidate;
+    this.taskNameField.classList.remove("is-invalid");
+    this.descriptionField.classList.remove("is-invalid");
+
+    return true;
   }
 
   handleOnClickSaveButton(event) {
@@ -143,19 +141,20 @@ class Modal extends HTMLElement {
     }
 
     const task = {
-      id: crypto.randomUUID(),
       title: formData.get("task-name"),
       description: formData.get("task-description"),
-      created_date: this._taskDueDate.trim(),
+      created_date: this._taskDueDate?.trim(),
       status: parseInt(formData.get("task-status")) || 0,
-      deadline_date: this._taskDueDate.trim(),
+      deadline_date: this._taskDueDate?.trim(),
       last_status_update_date: new Date().toISOString(),
     };
 
     this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
 
-    this.form.reset();
-    this.taskDueDateInput.setAttribute("value", "");
+    if (!this._taskId) {
+      this.form.reset();
+      this.taskDueDateInput.setAttribute("value", "");
+    }
   }
 
   connectedCallback() {
@@ -194,18 +193,34 @@ class Modal extends HTMLElement {
       "click",
       this.handleOnClickSaveButton.bind(this)
     );
-    this.enableDueDateSwitch.removeEventListener(
+    this.taskDueDateSwitch.removeEventListener(
       "click",
-      this.handleOnClickEnableDueDate.bind(this)
+      this.handleOnClickTaskDueDateSwitch.bind(this)
     );
   }
 
-  openModal(taskName, taskDescription) {
+  isEmptyDeadlineDate(deadlineDate) {
+    return deadlineDate === "";
+  }
+
+  setTaskDueDate(deadlineDate) {
+    const isEmptyDeadlineDate = this.isEmptyDeadlineDate(deadlineDate);
+    this.taskDueDateInput.setAttribute(
+      "disabled",
+      !isEmptyDeadlineDate ? "" : "disabled"
+    );
+    this.taskDueDateInput.setAttribute("value", deadlineDate || "");
+    this._taskDueDate = deadlineDate;
+    this.disabledTaskDueDate = isEmptyDeadlineDate;
+    this.taskDueDateSwitch.checked = !isEmptyDeadlineDate;
+  }
+
+  openModal(taskId, taskName, taskDescription, deadlineDate) {
+    this._taskId = taskId;
     this.taskNameField.value = taskName;
-    this.querySelector("textarea[name=task-description]").textContent =
-      taskDescription;
-    const bootstrapModal = new bootstrap.Modal(this.querySelector("#addTask"));
-    bootstrapModal.show();
+    this.descriptionField.textContent = taskDescription;
+    this.setTaskDueDate(deadlineDate);
+    new bootstrap.Modal(this.querySelector("#addTask")).show();
   }
 
   get tagName() {

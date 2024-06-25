@@ -76,9 +76,15 @@ const createTaskCard = (task) => {
     taskId = event.detail.id;
     const taskName = event.detail.title;
     const taskDescription = event.detail.description;
+    const deadline = event.detail.deadline;
 
     const formAppModalComponent = document.querySelector("app-modal-component");
-    formAppModalComponent.openModal(taskName, taskDescription);
+    formAppModalComponent.openModal(
+      taskId,
+      taskName,
+      taskDescription,
+      deadline
+    );
   });
 
   const taskElementWrapper = document.createElement("div");
@@ -151,7 +157,22 @@ export const bootstrapApp = async () => {
 
   formAppModalComponent.addEventListener("formSubmitted", async (event) => {
     const task = event.detail;
-    await addTask(task);
+    let preparedTask;
+
+    if (taskId) {
+      preparedTask = {
+        ...task,
+        id: taskId,
+      };
+      await updateTask(preparedTask);
+    } else {
+      preparedTask = {
+        ...task,
+        id: crypto.randomUUID(),
+      };
+      await addTask(preparedTask);
+    }
+
     if (resetTaskContainerMaker()) await renderTasks();
   });
 };

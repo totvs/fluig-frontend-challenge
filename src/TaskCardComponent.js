@@ -1,6 +1,12 @@
 class TaskCardComponent extends HTMLElement {
   static get observedAttributes() {
-    return ["title", "description", "deadline", "parking-days-at-collumn"];
+    return [
+      "id",
+      "title",
+      "description",
+      "deadline",
+      "parking-days-at-collumn",
+    ];
   }
 
   constructor() {
@@ -65,6 +71,7 @@ class TaskCardComponent extends HTMLElement {
       detail: {
         id: this._idProp,
         title: this._titleProp,
+        deadline: this._deadlineProps,
         description: this._descriptionProp,
         parkingDaysAtCollumn: this._parkingDaysAtCollumn,
         status: this._statusProp,
@@ -85,6 +92,7 @@ class TaskCardComponent extends HTMLElement {
   }
 
   connectedCallback() {
+    this._idProp = this.getAttribute("id");
     this._titleProp = this.getAttribute("title");
     this._descriptionProp = this.getAttribute("description");
     this._parkingDaysAtCollumn = this.getAttribute("parking-days-at-collumn");
@@ -95,6 +103,9 @@ class TaskCardComponent extends HTMLElement {
 
     const parkingDaysAtCollumn = this._parkingDaysAtCollumn;
     const deadlineDays = this.getDaysSinceExpired(this._deadlineProps);
+
+    if (!deadlineDays) this.deadlineSmallText.textContent = null;
+
     if (deadlineDays < 0) {
       this.deadlineSmallText.textContent = `Expirou a ${Math.abs(deadlineDays)} dia${Math.abs(deadlineDays) > 1 ? "s" : ""}`;
       this.deadlineSmallText.classList.add("text-danger");
