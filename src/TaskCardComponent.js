@@ -14,13 +14,14 @@ class TaskCardComponent extends HTMLElement {
     this.h5Container.className = "card-title";
 
     this.paragraphContainer = document.createElement("p");
-    this.paragraphContainer.className = "card-text";
+    this.paragraphContainer.className = "card-text text-secondary";
 
     this.collumnParkingDaysContainer = document.createElement("p");
     this.collumnParkingDaysContainer.className = "card-text";
 
-    const smallContainer = document.createElement("small");
-    this.collumnParkingDaysContainer.appendChild(smallContainer);
+    this.smallContainer = document.createElement("small");
+    this.smallContainer.className = "text-secondary";
+    this.collumnParkingDaysContainer.appendChild(this.smallContainer);
 
     this.styleLink = document.createElement("link");
     this.styleLink.rel = "stylesheet";
@@ -55,7 +56,7 @@ class TaskCardComponent extends HTMLElement {
     const collumnParkingDays = this.getAttribute("collumn-parking-days");
     this.h5Container.textContent = title;
     this.paragraphContainer.textContent = description;
-    this.collumnParkingDaysContainer.textContent = `${collumnParkingDays} dia${collumnParkingDays > 1 ? "s" : ""} nessa coluna`;
+    this.smallContainer.textContent = `${collumnParkingDays} dia${collumnParkingDays > 1 ? "s" : ""} nessa coluna`;
     this.cardContainer.addEventListener(
       "click",
       this.handleCardClick.bind(this)
