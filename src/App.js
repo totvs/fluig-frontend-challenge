@@ -22,35 +22,35 @@ const getParkingDaysAtColumn = (deadline) => {
 };
 
 const createTaskCard = (task) => {
-  const taskElement = document.createElement("app-task-card");
-  taskElement.setAttribute("title", task.title);
-  taskElement.setAttribute("description", task.description);
-  taskElement.setAttribute("deadline", task.deadline_date);
-  taskElement.setAttribute(
+  const taskCard = document.createElement("app-task-card");
+  taskCard.setAttribute("title", task.title);
+  taskCard.setAttribute("description", task.description);
+  taskCard.setAttribute("deadline", task.deadline_date);
+  taskCard.setAttribute(
     "parking-days-at-column",
     getParkingDaysAtColumn(task.deadline_date)
   );
-  taskElement.setAttribute("status", task.status);
-  taskElement.setAttribute("id", task.id);
-  taskElement.addEventListener("clickOnTaskCard", async (event) => {
+  taskCard.setAttribute("status", task.status);
+  taskCard.setAttribute("id", task.id);
+  taskCard.addEventListener("clickOnTaskCard", async (event) => {
     taskId = event.detail.id;
     const taskName = event.detail.title;
     const taskDescription = event.detail.description;
-    const deadline = event.detail.deadline;
+    const taskDeadline = event.detail.deadline;
 
     const formAppModalComponent = document.querySelector("app-modal-component");
     formAppModalComponent.openModal(
       taskId,
       taskName,
       taskDescription,
-      deadline
+      taskDeadline
     );
   });
 
-  const taskElementWrapper = document.createElement("div");
-  taskElementWrapper.className = "mb-3 text-start";
-  taskElementWrapper.appendChild(taskElement);
-  return taskElementWrapper;
+  const taskCardWrapper = document.createElement("div");
+  taskCardWrapper.className = "mb-3 text-start";
+  taskCardWrapper.appendChild(taskCard);
+  return taskCardWrapper;
 };
 
 const renderTasks = async () => {
@@ -153,12 +153,12 @@ const renderSearchResultDropdown = (tasks) => {
 
 const renderModal = () => {
   const formAppModalComponent = document.querySelector("app-modal-component");
-  formAppModalComponent.addEventListener("deleteTask", async (event) => {
-    await taskApi.deleteTask(taskId);
+  formAppModalComponent.addEventListener("onTaskDeleted", async (event) => {
+    await taskApi.onTaskDeleted(taskId);
     if (resetTaskContainerMaker()) await renderTasks();
   });
 
-  formAppModalComponent.addEventListener("formSubmitted", async (event) => {
+  formAppModalComponent.addEventListener("onTaskFormSubmitted", async (event) => {
     const task = event.detail;
     let preparedTask;
 

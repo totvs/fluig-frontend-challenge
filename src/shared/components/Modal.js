@@ -161,7 +161,9 @@ class Modal extends HTMLElement {
       last_status_update_date: new Date().toISOString(),
     };
 
-    this.dispatchEvent(new CustomEvent("formSubmitted", { detail: task }));
+    this.dispatchEvent(
+      new CustomEvent("onTaskFormSubmitted", { detail: task })
+    );
   }
 
   connectedCallback() {
@@ -171,7 +173,7 @@ class Modal extends HTMLElement {
     this.excludeButton.addEventListener("click", (event) => {
       event.preventDefault();
       this.resetFullForm();
-      this.dispatchEvent(new CustomEvent("deleteTask"));
+      this.dispatchEvent(new CustomEvent("onTaskDeleted"));
     });
 
     this.saveButton = this.querySelector(".save-button");

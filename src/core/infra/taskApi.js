@@ -33,7 +33,7 @@ class TaskApi {
     return await response.json();
   }
 
-  async deleteTask(id) {
+  async onTaskDeleted(id) {
     const response = await fetch(`http://localhost:3000/tasks/${id}`, {
       method: "DELETE",
     });
