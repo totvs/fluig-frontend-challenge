@@ -4,17 +4,22 @@ import { calculateDiffDaysFromDate } from "./utils/calculate-diff-days-from-date
 const taskApi = new TaskApi();
 let taskId;
 
-const resetTaskContainerMaker = () => {
-  const tasksContainer = document.querySelector(".task-container-to-do");
-  const tasksContainerDoing = document.querySelector(".task-container-doing");
-  const tasksContainerDone = document.querySelector(".task-container-done");
-  tasksContainerDoing.textContent = "";
-  tasksContainerDone.textContent = "";
-  tasksContainer.textContent = "";
+const resetTaskContainers = () => {
+  const taskContainers = [
+    ".task-container-to-do",
+    ".task-container-doing",
+    ".task-container-done",
+  ];
+
+  taskContainers.forEach((taskContainer) => {
+    const element = document.querySelector(taskContainer);
+    element.textContent = "";
+  });
+
   return true;
 };
 
-const createTaskCard = (task) => {
+const buildTaskCard = (task) => {
   const taskCard = document.createElement("app-task-card");
   taskCard.setAttribute("title", task.title);
   taskCard.setAttribute("description", task.description);
@@ -47,14 +52,40 @@ const createTaskCard = (task) => {
   return taskCardWrapper;
 };
 
-const renderTasks = async () => {
+const populateToDoListContainer = (toDoList) => {
+  const todoListContainer = document.querySelector(".task-container-to-do");
+  toDoList.forEach((card) => {
+    todoListContainer.appendChild(card);
+  });
+};
+
+const populateDoingListContainer = (doingList) => {
+  const doingListContainer = document.querySelector(".task-container-doing");
+  doingList.forEach((card) => {
+    doingListContainer.appendChild(card);
+  });
+};
+
+const populateDoneListContainer = (doneList) => {
+  const doneListContainer = document.querySelector(".task-container-done");
+  doneList.forEach((card) => {
+    doneListContainer.appendChild(card);
+  });
+};
+
+const setTotalTaskByColumn = (selector, totalText) => {
+  const element = document.querySelector(selector);
+  element.textContent = `(${totalText})`;
+};
+
+const populateAllTasks = async () => {
   let toDoList = [];
   let doingList = [];
   let doneList = [];
 
   const tasks = await taskApi.getAllTasks();
   tasks.forEach((task) => {
-    const card = createTaskCard(task);
+    const card = buildTaskCard(task);
     if (task.status === 0) {
       toDoList.push(card);
     } else if (task.status === 1) {
@@ -64,36 +95,16 @@ const renderTasks = async () => {
     }
   });
 
-  const todoListContainer = document.querySelector(".task-container-to-do");
-  const doingListContainer = document.querySelector(".task-container-doing");
-  const doneListContainer = document.querySelector(".task-container-done");
-  toDoList.forEach((card) => {
-    todoListContainer.appendChild(card);
-  });
-  doingList.forEach((card) => {
-    doingListContainer.appendChild(card);
-  });
-  doneList.forEach((card) => {
-    doneListContainer.appendChild(card);
-  });
+  populateToDoListContainer(toDoList);
+  populateDoingListContainer(doingList);
+  populateDoneListContainer(doneList);
 
-  const totalTodoTasksTextContainer = document.querySelector(
-    ".total-todo-tasks-text"
-  );
-  totalTodoTasksTextContainer.textContent = `(${toDoList.length})`;
-
-  const totalDoingTasksTextContainer = document.querySelector(
-    ".total-doing-tasks-text"
-  );
-  totalDoingTasksTextContainer.textContent = `(${doingList.length})`;
-
-  const totalCompletedTasksTextContainer = document.querySelector(
-    ".total-completed-tasks-text"
-  );
-  totalCompletedTasksTextContainer.textContent = `(${doneList.length})`;
+  setTotalTaskByColumn(".todo-tasks-total-text", toDoList.length);
+  setTotalTaskByColumn(".doing-tasks-total-text", doingList.length);
+  setTotalTaskByColumn(".completed-tasks-total-text", doneList.length);
 };
 
-const renderSearchResultDropdown = (tasks) => {
+const setupSearchResultDropdown = (tasks) => {
   const searchResultDropdown = document.querySelector(
     ".search-result-dropdown"
   );
@@ -101,7 +112,7 @@ const renderSearchResultDropdown = (tasks) => {
   searchResultDropdown.appendChild(searchResultDropdownList);
 
   const searchInput = document.querySelector("input[type='search']");
-  searchInput.addEventListener("click", async (event) => {
+  searchInput.addEventListener("onfocusout", async (event) => {
     console.log("focus");
   });
 
@@ -120,12 +131,7 @@ const renderSearchResultDropdown = (tasks) => {
       const itemList = document.createElement("li");
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent =
-        task.title +
-        " - " +
-        new Date(task.deadline_date).getDate() +
-        "/" +
-        (new Date(task.deadline_date).getMonth() + 1);
+      button.textContent = task.title;
       button.addEventListener("click", async (event) => {
         searchResultDropdown.classList.toggle("hide");
         taskId = task.id;
@@ -145,11 +151,11 @@ const renderSearchResultDropdown = (tasks) => {
   });
 };
 
-const renderModal = () => {
+const setupModal = () => {
   const formAppModalComponent = document.querySelector("app-modal-component");
   formAppModalComponent.addEventListener("onTaskDeleted", async (event) => {
     await taskApi.onTaskDeleted(taskId);
-    if (resetTaskContainerMaker()) await renderTasks();
+    if (resetTaskContainers()) await populateAllTasks();
   });
 
   formAppModalComponent.addEventListener(
@@ -172,15 +178,15 @@ const renderModal = () => {
         await taskApi.addTask(preparedTask);
       }
 
-      if (resetTaskContainerMaker()) await renderTasks();
+      if (resetTaskContainers()) await populateAllTasks();
     }
   );
 };
 
 export const bootstrapApp = async () => {
-  await renderTasks();
-  renderSearchResultDropdown();
-  renderModal();
+  await populateAllTasks();
+  setupSearchResultDropdown();
+  setupModal();
 };
 
 window.onload = async () => {
