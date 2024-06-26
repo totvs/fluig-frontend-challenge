@@ -13,7 +13,7 @@ describe("TaskCardComponent", () => {
     appTaskCard.setAttribute("title", "Title test");
     appTaskCard.setAttribute("description", "Description test");
     appTaskCard.setAttribute("deadline", "2024-06-25T17:00:28.175Z");
-    appTaskCard.setAttribute("parking-days-at-collumn", 10);
+    appTaskCard.setAttribute("parking-days-at-column", 10);
     document.body.appendChild(appTaskCard);
 
     taskCardComponent = document.body.querySelector("app-task-card");
@@ -49,7 +49,7 @@ describe("TaskCardComponent", () => {
     expect(descriptionContainer.textContent).toBe("new Description test");
   });
 
-  test("should render a parking-days-at-collumn text", () => {
+  test("should render a parking-days-at-column text", () => {
     const parkingDaysAtCollumn =
       taskCardComponent.shadowRoot.querySelectorAll("small")[0];
     expect(parkingDaysAtCollumn.textContent).toBe("10 dias nessa coluna");

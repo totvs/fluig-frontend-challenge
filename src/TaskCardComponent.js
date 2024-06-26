@@ -1,12 +1,6 @@
 class TaskCardComponent extends HTMLElement {
   static get observedAttributes() {
-    return [
-      "id",
-      "title",
-      "description",
-      "deadline",
-      "parking-days-at-collumn",
-    ];
+    return ["id", "title", "description", "deadline", "parking-days-at-column"];
   }
 
   constructor() {
@@ -95,7 +89,7 @@ class TaskCardComponent extends HTMLElement {
     this._idProp = this.getAttribute("id");
     this._titleProp = this.getAttribute("title");
     this._descriptionProp = this.getAttribute("description");
-    this._parkingDaysAtCollumn = this.getAttribute("parking-days-at-collumn");
+    this._parkingDaysAtCollumn = this.getAttribute("parking-days-at-column");
     this._deadlineProps = this.getAttribute("deadline");
 
     this.h5Container.textContent = this._titleProp;
@@ -136,7 +130,7 @@ class TaskCardComponent extends HTMLElement {
       this.h5Container.textContent = newValue;
     } else if (name === "description") {
       this.paragraphContainer.textContent = newValue;
-    } else if (name === "parking-days-at-collumn") {
+    } else if (name === "parking-days-at-column") {
       this.smallParkingDaysSmallText.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
     } else if (name === "deadline") {
       this.deadlineSmallText.textContent = `${this.getDaysSinceExpired(newValue)} dia${this.getDaysSinceExpired(newValue) > 1 ? "s" : ""} restantes`;

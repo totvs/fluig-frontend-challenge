@@ -171,7 +171,7 @@ class Modal extends HTMLElement {
     this.excludeButton.addEventListener("click", (event) => {
       event.preventDefault();
       this.resetFullForm();
-      this.dispatchEvent(new CustomEvent("excludeTask"));
+      this.dispatchEvent(new CustomEvent("deleteTask"));
     });
 
     this.saveButton = this.querySelector(".save-button");

@@ -25,15 +25,25 @@
             <div class="me-auto"></div>
             <form class="d-flex" role="search">
               <div class="input-group">
-                <span class="input-group-text"><i class="bi-search"></i></span>
                 <input
                   class="form-control"
                   type="search"
                   placeholder="Pesquisar..."
                   aria-label="Search"
                 />
-                <button class="btn btn-outline-success" type="submit">Buscar</button>
+                <button
+                  class="btn btn-outline-success search-button"
+                  type="submit"
+                >
+                  <span><i class="bi-search"></i></span>
+                  Buscar
+                </button>
               </div>
+              <!-- search-result-dropdown -->
+              <div class="search-result-dropdown hide">
+                <span>Tarefas encontradas</span>
+              </div>
+              <!-- search-result-dropdown -->
             </form>
           </div>
         </div>
@@ -41,7 +51,9 @@
       <div class="row">
         <div class="col">
           <div class="d-grid gap-2">
-            <p class="mb-0 text-start">A fazer <span class="total-todo-tasks-text">(4)</span></p>
+            <p class="mb-0 text-start">
+              A fazer <span class="total-todo-tasks-text">(4)</span>
+            </p>
             <button
               type="button"
               class="btn btn-primary mb-4"
@@ -57,7 +69,9 @@
         </div>
         <div class="col">
           <div class="d-grid gap-2">
-            <p class="mb-0 text-start">Fazendo <span class="total-doing-tasks-text">(4)</span></p>
+            <p class="mb-0 text-start">
+              Fazendo <span class="total-doing-tasks-text">(4)</span>
+            </p>
             <button
               type="button"
               class="btn btn-primary mb-4"
@@ -73,7 +87,9 @@
         </div>
         <div class="col">
           <div class="d-grid gap-2">
-            <p class="mb-0 text-start">Concluído <span class="total-completed-tasks-text">(4)</span></p>
+            <p class="mb-0 text-start">
+              Concluído <span class="total-completed-tasks-text">(4)</span>
+            </p>
             <button
               type="button"
               class="btn btn-primary mb-4"

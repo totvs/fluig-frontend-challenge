@@ -1,52 +1,15 @@
-// Import all of Bootstrap's JS
-import * as bootstrap from "bootstrap";
+import TaskApi from "./core/infra/TaskApi.js";
 
+const taskApi = new TaskApi();
 let taskId;
 
-export const getTasks = async () => {
-  const response = await fetch(
-    "http://localhost:3000/tasks?_sort=title&_order=asc"
-  );
-  const tasks = await response.json();
-  return tasks;
-};
-
-export const addTask = async (task) => {
-  const response = await fetch("http://localhost:3000/tasks", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-  const createdTask = await response.json();
-  return createdTask;
-};
-
-export const updateTask = async (task) => {
-  const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-  const updatedTask = await response.json();
-  return updatedTask;
-};
-
-export const deleteTask = async (id) => {
-  const response = await fetch(`http://localhost:3000/tasks/${id}`, {
-    method: "DELETE",
-  });
-  const deletedTask = await response.json();
-  return deletedTask;
-};
-
-export const getTask = async (id) => {
-  const response = await fetch(`http://localhost:3000/tasks/${id}`);
-  const task = await response.json();
-  return task;
+const moveTask = async (id) => {
+  const task = await taskApi.getTaskById(id);
+  const updatedTask = {
+    ...task,
+    status: id,
+  };
+  await taskApi.updateTask(updatedTask);
 };
 
 const resetTaskContainerMaker = () => {
@@ -55,13 +18,12 @@ const resetTaskContainerMaker = () => {
   return true;
 };
 
-const moveTask = async (id) => {
-  const task = await getTask(id);
-  const updatedTask = {
-    ...task,
-    status: id,
-  };
-  await updateTask(updatedTask);
+const getParkingDaysAtColumn = (deadline) => {
+  const deadlineDate = new Date(deadline);
+  const today = new Date();
+  const timeDifference = deadlineDate - today;
+  const days = Math.floor(timeDifference / (1000 * 3600 * 24));
+  return days;
 };
 
 const createTaskCard = (task) => {
@@ -69,7 +31,10 @@ const createTaskCard = (task) => {
   taskElement.setAttribute("title", task.title);
   taskElement.setAttribute("description", task.description);
   taskElement.setAttribute("deadline", task.deadline_date);
-  taskElement.setAttribute("parking-day-at-collumn", 2);
+  taskElement.setAttribute(
+    "parking-days-at-column",
+    getParkingDaysAtColumn(task.deadline_date)
+  );
   taskElement.setAttribute("status", task.status);
   taskElement.setAttribute("id", task.id);
   taskElement.addEventListener("clickOnTaskCard", async (event) => {
@@ -98,7 +63,7 @@ const renderTasks = async () => {
   let doingList = [];
   let doneList = [];
 
-  const tasks = await getTasks();
+  const tasks = await taskApi.getAllTasks();
   tasks.forEach((task) => {
     const card = createTaskCard(task);
     if (task.status === 0) {
@@ -139,14 +104,63 @@ const renderTasks = async () => {
   totalCompletedTasksTextContainer.textContent = `(${doneList.length})`;
 };
 
-export const bootstrapApp = async () => {
-  await renderTasks();
+const renderSearchResultDropdown = (tasks) => {
+  const searchResultDropdown = document.querySelector(
+    ".search-result-dropdown"
+  );
+  const searchResultDropdownList = document.createElement("ul");
+  searchResultDropdown.appendChild(searchResultDropdownList);
 
+  const searchInput = document.querySelector("input[type='search']");
+  searchInput.addEventListener("click", async (event) => {
+    console.log("focus");
+  });
+
+  const searchButton = document.querySelector(".search-button");
+  searchButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const tasks = await taskApi.getTasksByTitle(searchInput.value);
+    searchResultDropdownList.textContent = "";
+
+    if (tasks.length !== 0) {
+      searchResultDropdown.classList.toggle("hide");
+    }
+
+    tasks.forEach((task) => {
+      const itemList = document.createElement("li");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent =
+        task.title +
+        " - " +
+        new Date(task.deadline_date).getDate() +
+        "/" +
+        (new Date(task.deadline_date).getMonth() + 1);
+      button.addEventListener("click", async (event) => {
+        searchResultDropdown.classList.toggle("hide");
+        taskId = task.id;
+        const formAppModalComponent = document.querySelector(
+          "app-modal-component"
+        );
+        formAppModalComponent.openModal(
+          taskId,
+          task.title,
+          task.description,
+          task.deadline_date
+        );
+      });
+      itemList.appendChild(button);
+      searchResultDropdownList.appendChild(itemList);
+    });
+  });
+};
+
+const renderModal = () => {
   const formAppModalComponent = document.querySelector("app-modal-component");
-  formAppModalComponent.addEventListener("excludeTask", async (event) => {
-    await deleteTask(taskId);
+  formAppModalComponent.addEventListener("deleteTask", async (event) => {
+    await taskApi.deleteTask(taskId);
     if (resetTaskContainerMaker()) await renderTasks();
-    
   });
 
   formAppModalComponent.addEventListener(
@@ -165,17 +179,23 @@ export const bootstrapApp = async () => {
         ...task,
         id: taskId,
       };
-      await updateTask(preparedTask);
+      await taskApi.updateTask(preparedTask);
     } else {
       preparedTask = {
         ...task,
         id: crypto.randomUUID(),
       };
-      await addTask(preparedTask);
+      await taskApi.addTask(preparedTask);
     }
 
     if (resetTaskContainerMaker()) await renderTasks();
   });
+};
+
+export const bootstrapApp = async () => {
+  await renderTasks();
+  renderSearchResultDropdown();
+  renderModal();
 };
 
 window.onload = async () => {
