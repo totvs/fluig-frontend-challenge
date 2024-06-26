@@ -158,13 +158,6 @@ const renderModal = () => {
     if (resetTaskContainerMaker()) await renderTasks();
   });
 
-  formAppModalComponent.addEventListener(
-    "selectedTaskStatusEvent",
-    async (event) => {
-      const status = event.detail.status;
-    }
-  );
-
   formAppModalComponent.addEventListener("formSubmitted", async (event) => {
     const task = event.detail;
     let preparedTask;
