@@ -3,17 +3,12 @@ import TaskApi from "./core/infra/TaskApi.js";
 const taskApi = new TaskApi();
 let taskId;
 
-const moveTask = async (id) => {
-  const task = await taskApi.getTaskById(id);
-  const updatedTask = {
-    ...task,
-    status: id,
-  };
-  await taskApi.updateTask(updatedTask);
-};
-
 const resetTaskContainerMaker = () => {
   const tasksContainer = document.querySelector(".task-container-to-do");
+  const tasksContainerDoing = document.querySelector(".task-container-doing");
+  const tasksContainerDone = document.querySelector(".task-container-done");
+  tasksContainerDoing.textContent = "";
+  tasksContainerDone.textContent = "";
   tasksContainer.textContent = "";
   return true;
 };
