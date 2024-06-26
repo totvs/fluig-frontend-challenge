@@ -1,4 +1,5 @@
 import TaskApi from "./core/infra/TaskApi.js";
+import { calculateDiffDaysFromDate } from "./utils/calculate-diff-days-from-date.js";
 
 const taskApi = new TaskApi();
 let taskId;
@@ -13,26 +14,19 @@ const resetTaskContainerMaker = () => {
   return true;
 };
 
-const getParkingDaysAtColumn = (deadline) => {
-  const deadlineDate = new Date(deadline);
-  const today = new Date();
-  const timeDifference = deadlineDate - today;
-  const days = Math.floor(timeDifference / (1000 * 3600 * 24));
-  return days;
-};
-
 const createTaskCard = (task) => {
   const taskCard = document.createElement("app-task-card");
   taskCard.setAttribute("title", task.title);
   taskCard.setAttribute("description", task.description);
-  taskCard.setAttribute("deadline", task.deadline_date);
-  taskCard.setAttribute(
-    "parking-days-at-column",
-    getParkingDaysAtColumn(task.deadline_date)
+  taskCard.setAttribute("deadline", task.deadline_date || task.created_date);
+  const calculateParkingDaysAtColumn = calculateDiffDaysFromDate(
+    task.created_date
   );
+
+  taskCard.setAttribute("parking-days-at-column", calculateParkingDaysAtColumn);
   taskCard.setAttribute("status", task.status);
   taskCard.setAttribute("id", task.id);
-  taskCard.addEventListener("clickOnTaskCard", async (event) => {
+  taskCard.addEventListener("onClickTaskCard", async (event) => {
     taskId = event.detail.id;
     const taskName = event.detail.title;
     const taskDescription = event.detail.description;
@@ -158,26 +152,29 @@ const renderModal = () => {
     if (resetTaskContainerMaker()) await renderTasks();
   });
 
-  formAppModalComponent.addEventListener("onTaskFormSubmitted", async (event) => {
-    const task = event.detail;
-    let preparedTask;
+  formAppModalComponent.addEventListener(
+    "onTaskFormSubmitted",
+    async (event) => {
+      const task = event.detail;
+      let preparedTask;
 
-    if (taskId) {
-      preparedTask = {
-        ...task,
-        id: taskId,
-      };
-      await taskApi.updateTask(preparedTask);
-    } else {
-      preparedTask = {
-        ...task,
-        id: crypto.randomUUID(),
-      };
-      await taskApi.addTask(preparedTask);
+      if (taskId) {
+        preparedTask = {
+          ...task,
+          id: taskId,
+        };
+        await taskApi.updateTask(preparedTask);
+      } else {
+        preparedTask = {
+          ...task,
+          id: crypto.randomUUID(),
+        };
+        await taskApi.addTask(preparedTask);
+      }
+
+      if (resetTaskContainerMaker()) await renderTasks();
     }
-
-    if (resetTaskContainerMaker()) await renderTasks();
-  });
+  );
 };
 
 export const bootstrapApp = async () => {

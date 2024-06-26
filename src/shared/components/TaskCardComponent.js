@@ -1,3 +1,5 @@
+import { calculateDiffDaysFromDate } from "../../utils/calculate-diff-days-from-date.js";
+
 class TaskCardComponent extends HTMLElement {
   static get observedAttributes() {
     return ["id", "title", "description", "deadline", "parking-days-at-column"];
@@ -12,20 +14,20 @@ class TaskCardComponent extends HTMLElement {
     this._titleProp;
     this._descriptionProp;
     this._parkingDaysAtCollumn;
-    this._deadlineProps;
+    this._deadlineProp;
 
-    this.cardContainer = document.createElement("div");
-    this.cardContainer.className = "card";
-    this.cardContainer.style.cursor = "pointer";
+    this.card = document.createElement("div");
+    this.card.className = "card";
+    this.card.style.cursor = "pointer";
 
-    this.cardBodyContainer = document.createElement("div");
-    this.cardBodyContainer.className = "card-body";
+    this.cardBody = document.createElement("div");
+    this.cardBody.className = "card-body";
 
-    this.h5Container = document.createElement("h5");
-    this.h5Container.className = "card-title";
+    this.cardTitle = document.createElement("h5");
+    this.cardTitle.className = "card-title";
 
-    this.paragraphContainer = document.createElement("p");
-    this.paragraphContainer.className = "card-text text-secondary";
+    this.cardDescription = document.createElement("p");
+    this.cardDescription.className = "card-text text-secondary";
 
     this.wrapperTextRow = document.createElement("div");
     this.wrapperTextRow.className = "d-flex justify-content-between";
@@ -51,21 +53,19 @@ class TaskCardComponent extends HTMLElement {
     this.styleLink.href =
       "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css";
 
-    this.cardContainer.appendChild(this.cardBodyContainer);
-    this.cardBodyContainer.appendChild(this.h5Container);
-    this.cardBodyContainer.appendChild(this.paragraphContainer);
-    this.cardBodyContainer.appendChild(this.wrapperTextRow);
-    this.shadowRoot.append(this.cardContainer, this.styleLink);
+    this.card.appendChild(this.cardBody);
+    this.cardBody.appendChild(this.cardTitle);
+    this.cardBody.appendChild(this.cardDescription);
+    this.cardBody.appendChild(this.wrapperTextRow);
+    this.shadowRoot.append(this.card, this.styleLink);
   }
 
   handleCardClick() {
-    const event = new CustomEvent("clickOnTaskCard", {
-      composed: true,
-      bubbles: true,
+    const event = new CustomEvent("onClickTaskCard", {
       detail: {
         id: this._idProp,
         title: this._titleProp,
-        deadline: this._deadlineProps,
+        deadline: this._deadlineProp,
         description: this._descriptionProp,
         parkingDaysAtCollumn: this._parkingDaysAtCollumn,
         status: this._statusProp,
@@ -74,15 +74,29 @@ class TaskCardComponent extends HTMLElement {
     this.dispatchEvent(event);
   }
 
-  getDaysSinceExpired(date) {
-    const deadline = new Date(date);
-    const now = new Date();
-    const diffTimeInMilliseconds = deadline - now;
-    const minutes = 1000 * 60;
-    const hours = minutes * 60;
-    const days = hours * 24;
-    const diffDays = Math.ceil(diffTimeInMilliseconds / days);
-    return diffDays;
+  getFomattedParkingDaysText(parkingDaysAtCollumn) {
+    const days = Math.abs(parkingDaysAtCollumn);
+    return `${days} dia${days > 1 ? "s" : ""} nessa coluna`;
+  }
+
+  getFormattedDaysSinceExpired(daysSinceExpired) {
+    if (daysSinceExpired < 0) {
+      return `Expirou a ${Math.abs(daysSinceExpired)} dia${Math.abs(daysSinceExpired) > 1 ? "s" : ""}`;
+    } else if (daysSinceExpired > 0) {
+      return `${daysSinceExpired} dia${daysSinceExpired > 1 ? "s" : ""} restantes`;
+    } else if (daysSinceExpired === 0) {
+      return "Expira hoje";
+    }
+  }
+
+  getClassForDaysSinceExpired(daysSinceExpired) {
+    if (daysSinceExpired < 0) {
+      return "text-danger";
+    } else if (daysSinceExpired > 0) {
+      return "text-success";
+    } else if (daysSinceExpired === 0) {
+      return "text-warning";
+    }
   }
 
   connectedCallback() {
@@ -90,50 +104,38 @@ class TaskCardComponent extends HTMLElement {
     this._titleProp = this.getAttribute("title");
     this._descriptionProp = this.getAttribute("description");
     this._parkingDaysAtCollumn = this.getAttribute("parking-days-at-column");
-    this._deadlineProps = this.getAttribute("deadline");
+    this._deadlineProp = this.getAttribute("deadline");
 
-    this.h5Container.textContent = this._titleProp;
-    this.paragraphContainer.textContent = this._descriptionProp;
+    this.cardTitle.textContent = this._titleProp;
+    this.cardDescription.textContent = this._descriptionProp;
 
-    const parkingDaysAtCollumn = this._parkingDaysAtCollumn;
-    const deadlineDays = this.getDaysSinceExpired(this._deadlineProps);
+    const daysSinceExpired = calculateDiffDaysFromDate(this._deadlineProp);
+    if (!daysSinceExpired) this.deadlineSmallText.textContent = null;
+    this.deadlineSmallText.textContent =
+      this.getFormattedDaysSinceExpired(daysSinceExpired);
+    this.deadlineSmallText.className =
+      this.getClassForDaysSinceExpired(daysSinceExpired);
 
-    if (!deadlineDays) this.deadlineSmallText.textContent = null;
+    this.smallParkingDaysSmallText.textContent =
+      this.getFomattedParkingDaysText(this._parkingDaysAtCollumn);
 
-    if (deadlineDays < 0) {
-      this.deadlineSmallText.textContent = `Expirou a ${Math.abs(deadlineDays)} dia${Math.abs(deadlineDays) > 1 ? "s" : ""}`;
-      this.deadlineSmallText.classList.add("text-danger");
-    } else if (deadlineDays > 0) {
-      this.deadlineSmallText.textContent = `${deadlineDays} dia${deadlineDays > 1 ? "s" : ""} restantes`;
-      this.deadlineSmallText.classList.add("text-success");
-    } else if (deadlineDays === 0) {
-      this.deadlineSmallText.textContent = "Expira hoje";
-      this.deadlineSmallText.classList.add("text-warning");
-    }
-
-    this.smallParkingDaysSmallText.textContent = `${parkingDaysAtCollumn} dia${parkingDaysAtCollumn > 1 ? "s" : ""} nessa coluna`;
-    this.cardContainer.addEventListener(
-      "click",
-      this.handleCardClick.bind(this)
-    );
+    this.card.addEventListener("click", this.handleCardClick.bind(this));
   }
 
   disconnectedCallback() {
-    this.cardContainer.removeEventListener(
-      "click",
-      this.handleCardClick.bind(this)
-    );
+    this.card.removeEventListener("click", this.handleCardClick.bind(this));
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "title") {
-      this.h5Container.textContent = newValue;
+      this.cardTitle.textContent = newValue;
     } else if (name === "description") {
-      this.paragraphContainer.textContent = newValue;
+      this.cardDescription.textContent = newValue;
     } else if (name === "parking-days-at-column") {
-      this.smallParkingDaysSmallText.textContent = `${newValue} dia${newValue > 1 ? "s" : ""} nessa coluna`;
+      this.smallParkingDaysSmallText.textContent =
+        this.getFomattedParkingDaysText(newValue);
     } else if (name === "deadline") {
-      this.deadlineSmallText.textContent = `${this.getDaysSinceExpired(newValue)} dia${this.getDaysSinceExpired(newValue) > 1 ? "s" : ""} restantes`;
+      this.deadlineSmallText.textContent = `${calculateDiffDaysFromDate(newValue)} dia${calculateDiffDaysFromDate(newValue) > 1 ? "s" : ""} restantes`;
     }
   }
 }

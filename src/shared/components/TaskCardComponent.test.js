@@ -4,6 +4,12 @@
 
 import "./TaskCardComponent.js";
 
+jest.mock("../../utils/calculate-diff-days-from-date.js", () => ({
+  calculateDiffDaysFromDate: () => {
+    return 0;
+  },
+}));
+
 describe("TaskCardComponent", () => {
   let taskCardComponent;
   let appTaskCard;
