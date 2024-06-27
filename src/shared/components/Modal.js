@@ -1,6 +1,7 @@
 import * as bootstrap from "bootstrap";
 import "./date-input.js";
 import { getFormattedTaskDueDate } from "../../utils/ge-formatted-task-due-date.js";
+import STATUS from "../../core/contants/status.js";
 
 class Modal extends HTMLElement {
   constructor() {
@@ -165,7 +166,7 @@ class Modal extends HTMLElement {
       title: formData.get("task-name"),
       description: formData.get("task-description"),
       created_date: new Date().toISOString(),
-      status: parseInt(formData.get("task-status")) || 0,
+      status: parseInt(formData.get("task-status")) || STATUS.TODO,
       deadline_date: this._taskDueDate?.trim() || "",
       last_status_update_date: new Date().toISOString(),
     };

@@ -6,6 +6,7 @@ import {
 } from "./core/notification/event-notifier-observable.js";
 import TasksHttpGateway from "./core/gateways/tasks-http-gateway.js";
 import FetchAdapter from "./core/infra/fetch-adapter.js";
+import STATUS from "./core/contants/status.js";
 
 const eventNotifierObservable = new EventNotifierObservable();
 const fetchAdapter = new FetchAdapter();
@@ -128,11 +129,11 @@ const populateAllTasks = async () => {
     const tasks = await tasksHttpGateway.getAllTasks();
     tasks.forEach((task) => {
       const card = buildTaskCard(task);
-      if (task.status === 0) {
+      if (task.status === STATUS.TODO) {
         toDoList.push(card);
-      } else if (task.status === 1) {
+      } else if (task.status === STATUS.IN_PROGRESS) {
         doingList.push(card);
-      } else if (task.status === 2) {
+      } else if (task.status === STATUS.DONE) {
         doneList.push(card);
       }
     });
