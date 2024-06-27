@@ -226,9 +226,7 @@ class Modal extends HTMLElement {
 
   setTaskDueDate(dueDate) {
     const isEmptyDeadlineDate = this.isEmptyDeadlineDate(dueDate);
-    let formattedDueDate = getFormattedTaskDueDate(dueDate);
-    console.log("formattedDueDate", formattedDueDate);
-
+    const formattedDueDate = getFormattedTaskDueDate(dueDate);
     this.taskDueDateInput.setAttribute(
       "disabled",
       !isEmptyDeadlineDate ? "" : "disabled"

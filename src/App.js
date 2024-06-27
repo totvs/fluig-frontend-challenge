@@ -237,7 +237,6 @@ const setupModal = () => {
             ...task,
             id: taskId,
           };
-          console.log("preparedTask", preparedTask);
           await taskApi.updateTask(preparedTask);
           showToastMessage("Tarefa atualizada com sucesso!", "success");
         } catch (error) {
