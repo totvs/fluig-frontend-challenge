@@ -214,10 +214,15 @@ const setupModal = () => {
   });
 
   formAppModalComponent.addEventListener("onTaskDeleted", async () => {
+    formAppModalComponent.showExcludeButtonSpinner();
     try {
       await taskApi.onTaskDeleted(taskId);
       if (resetTaskContainers()) await populateAllTasks();
       showToastMessage("Tarefa excluída com sucesso!", "success");
+      setTimeout(() => {
+        // only for demo purposes
+        formAppModalComponent.hideExcludeButtonSpinner();
+      }, 1000);
     } catch (error) {
       showToastMessage(
         "Erro ao excluir a tarefa, tente novamente mais tarde.",
@@ -229,6 +234,7 @@ const setupModal = () => {
   formAppModalComponent.addEventListener(
     "onTaskFormSubmitted",
     async (event) => {
+      formAppModalComponent.showSaveButtonSpinner();
       const task = event.detail;
       let preparedTask;
 
@@ -240,6 +246,10 @@ const setupModal = () => {
           };
           await taskApi.updateTask(preparedTask);
           showToastMessage("Tarefa atualizada com sucesso!", "success");
+          setTimeout(() => {
+            // only for demo purposes
+            formAppModalComponent.hideSaveButtonSpinner();
+          }, 1000);
         } catch (error) {
           showToastMessage(
             "Erro ao atualizar a tarefa, tente novamente mais tarde.",
@@ -254,6 +264,10 @@ const setupModal = () => {
           };
           await taskApi.addTask(preparedTask);
           showToastMessage("Tarefa criada com sucesso!", "success");
+          setTimeout(() => {
+            // only for demo purposes
+            formAppModalComponent.hideSaveButtonSpinner();
+          }, 1000);
         } catch (error) {
           showToastMessage(
             "Erro ao salvar a tarefa, tente novamente mais tarde.",

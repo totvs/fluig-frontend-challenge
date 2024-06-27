@@ -59,8 +59,14 @@ class Modal extends HTMLElement {
               </form>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary exclude-button">Excluir</button>
-              <button type="button" class="btn btn-primary save-button">Salvar</button>
+              <button type="button" class="btn btn-secondary exclude-button">
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                Excluir
+              </button>
+              <button type="button" class="btn btn-primary save-button">
+                <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                Salvar
+              </button>
             </div>
           </div>
         </div>
@@ -243,6 +249,26 @@ class Modal extends HTMLElement {
     this.descriptionField.textContent = taskDescription;
     this.setTaskDueDate(dueDate);
     new bootstrap.Modal(this.querySelector("#addTask")).show();
+  }
+
+  showSaveButtonSpinner() {
+    const spinner = this.saveButton.querySelector(".spinner-border");
+    spinner.classList.remove("d-none");
+  }
+
+  hideSaveButtonSpinner() {
+    const spinner = this.saveButton.querySelector(".spinner-border");
+    spinner.classList.add("d-none");
+  }
+
+  showExcludeButtonSpinner() {
+    const spinner = this.excludeButton.querySelector(".spinner-border");
+    spinner.classList.remove("d-none");
+  }
+
+  hideExcludeButtonSpinner() {
+    const spinner = this.excludeButton.querySelector(".spinner-border");
+    spinner.classList.add("d-none");
   }
 }
 
