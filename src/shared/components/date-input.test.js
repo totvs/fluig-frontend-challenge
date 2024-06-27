@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./DateInput.js";
+import "./date-input.js";
 
 describe("DateInput", () => {
   let dateInput;

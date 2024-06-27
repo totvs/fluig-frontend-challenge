@@ -1,7 +1,12 @@
-import TaskApi from "./core/infra/TaskApi.js";
+import TaskApi from "./core/infra/task-api.js";
 import { calculateDiffDaysFromDate } from "./utils/calculate-diff-days-from-date.js";
-import * as bootstrap from "bootstrap";
+import { showToastMessage } from "./core/infra/toast-alert.js";
+import {
+  EventNotifierObservable,
+  EventListenerObserver,
+} from "./core/notification/event-notifier-observable.js";
 
+const eventNotifierObservable = new EventNotifierObservable();
 const taskApi = new TaskApi();
 let taskId;
 
@@ -18,6 +23,21 @@ const resetTaskContainers = () => {
   });
 
   return true;
+};
+
+const setTotalTaskByColumn = (selector, totalText) => {
+  const element = document.querySelector(selector);
+  element.textContent = `(${totalText})`;
+};
+
+const openModalByTask = (task) => {
+  const formAppModalComponent = document.querySelector("app-modal-component");
+  formAppModalComponent.openModal(
+    task.id,
+    task.title,
+    task.description,
+    task.deadline_date
+  );
 };
 
 const buildTaskCard = (task) => {
@@ -38,19 +58,41 @@ const buildTaskCard = (task) => {
     const taskDescription = event.detail.description;
     const taskDeadline = event.detail.deadline;
 
-    const formAppModalComponent = document.querySelector("app-modal-component");
-    formAppModalComponent.openModal(
-      taskId,
-      taskName,
-      taskDescription,
-      taskDeadline
-    );
+    const task = {
+      id: taskId,
+      title: taskName,
+      description: taskDescription,
+      deadline_date: taskDeadline,
+    };
+
+    openModalByTask(task);
   });
 
   const taskCardWrapper = document.createElement("div");
   taskCardWrapper.className = "mb-3 text-start";
   taskCardWrapper.appendChild(taskCard);
   return taskCardWrapper;
+};
+
+const buildSearchResultItem = (task) => {
+  const dropdownItem = document.createElement("li");
+  const dropdownItemButton = document.createElement("button");
+  dropdownItemButton.type = "button";
+  dropdownItemButton.textContent = task.title;
+  dropdownItemButton.addEventListener("click", async (event) => {
+    eventNotifierObservable.notify({
+      event: "onClickTaskCard",
+      detail: {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        deadline: task.deadline_date,
+      },
+      action: "click",
+    });
+  });
+  dropdownItem.appendChild(dropdownItemButton);
+  return dropdownItem;
 };
 
 const populateToDoListContainer = (toDoList) => {
@@ -72,11 +114,6 @@ const populateDoneListContainer = (doneList) => {
   doneList.forEach((card) => {
     doneListContainer.appendChild(card);
   });
-};
-
-const setTotalTaskByColumn = (selector, totalText) => {
-  const element = document.querySelector(selector);
-  element.textContent = `(${totalText})`;
 };
 
 const populateAllTasks = async () => {
@@ -116,6 +153,20 @@ const handleOnMouseLeaveSearchResultDropdown = (event) => {
   event.target.classList.add("hide");
 };
 
+const handleHideSearchResultDropdown = (data) => {
+  if (data.action === "click") {
+    const { detail: task } = data;
+    taskId = task.id;
+
+    const searchResultDropdown = document.querySelector(
+      ".search-result-dropdown"
+    );
+    searchResultDropdown.classList.add("hide");
+
+    openModalByTask(task);
+  }
+};
+
 const setupSearchResultDropdown = () => {
   const searchResultDropdown = document.querySelector(
     ".search-result-dropdown"
@@ -136,34 +187,18 @@ const setupSearchResultDropdown = () => {
     try {
       const searchInput = document.querySelector(".search-input");
       const tasks = await taskApi.getTasksByTitle(searchInput.value);
-      searchResultDropdownList.textContent = "";
 
       if (tasks.length !== 0) {
+        searchResultDropdownList.textContent = "";
         searchResultDropdown.classList.toggle("hide");
       }
 
       tasks.forEach((task) => {
-        const itemList = document.createElement("li");
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = task.title;
-        button.addEventListener("click", async (event) => {
-          searchResultDropdown.classList.toggle("hide");
-          taskId = task.id;
-          const formAppModalComponent = document.querySelector(
-            "app-modal-component"
-          );
-          formAppModalComponent.openModal(
-            taskId,
-            task.title,
-            task.description,
-            task.deadline_date
-          );
-        });
-        itemList.appendChild(button);
+        const itemList = buildSearchResultItem(task);
         searchResultDropdownList.appendChild(itemList);
       });
     } catch (error) {
+      console.log(error);
       showToastMessage(
         "Erro ao pesquisar as tarefas, tente mais tarde.",
         "danger"
@@ -216,16 +251,17 @@ const setupModal = () => {
   );
 };
 
-const showToastMessage = (message, type = "success") => {
-  const toastComponent = document.querySelector(".toast-component");
-  toastComponent.classList.add(`text-bg-${type}`);
-  toastComponent.querySelector(".toast-body").textContent = message;
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastComponent);
-  toastBootstrap.show();
+const setupObservables = () => {
+  const clickSearchResultItemNotifier = new EventListenerObserver(
+    "HideSearchResultDropdown",
+    handleHideSearchResultDropdown
+  );
+  eventNotifierObservable.subscribe(clickSearchResultItemNotifier);
 };
 
 export const bootstrapApp = async () => {
   await populateAllTasks();
+  setupObservables();
   setupSearchResultDropdown();
   setupModal();
 };

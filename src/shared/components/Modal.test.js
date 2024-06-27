@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./Modal.js";
+import "./modal.js";
 
 describe("Modal", () => {
   let modal;

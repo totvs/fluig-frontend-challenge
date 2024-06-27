@@ -1,5 +1,5 @@
 import * as bootstrap from "bootstrap";
-import "./DateInput.js";
+import "./date-input.js";
 
 class Modal extends HTMLElement {
   constructor() {

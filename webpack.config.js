@@ -7,10 +7,10 @@ const autoprefixer = require("autoprefixer");
 
 const config = {
   entry: [
-    "./src/shared/components/TaskCardComponent.js",
+    "./src/shared/components/task-card.js",
     "./src/bootstrap.js",
-    "./src/shared/components/Modal.js",
-    "./src/App.js",
+    "./src/shared/components/modal.js",
+    "./src/app.js",
   ],
   output: {
     filename: "bundle.js",

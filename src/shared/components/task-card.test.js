@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "./TaskCardComponent.js";
+import "./task-card.js";
 
 jest.mock("../../utils/calculate-diff-days-from-date.js", () => ({
   calculateDiffDaysFromDate: () => {

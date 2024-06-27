@@ -93,20 +93,11 @@
     {
       "title": "Revisão de notas do mês de dezembro",
       "description": "Revisar as notas #321 #322 #336 com problemas no campo detalhamento. ",
-      "created_date": "2024-06-26T19:19:38.329Z",
-      "status": 2,
-      "deadline_date": "2024-07-01",
-      "last_status_update_date": "2024-06-26T19:19:38.329Z",
-      "id": "870b682c-e2e4-47a9-8113-a81b5b3b1691"
-    },
-    {
-      "title": "carlos nova tarefa ",
-      "description": "descricao da nova tarefa",
-      "created_date": "2024-06-26T18:50:11.456Z",
+      "created_date": "2024-06-27T15:17:13.778Z",
       "status": 0,
-      "deadline_date": "2024-07-06",
-      "last_status_update_date": "2024-06-26T18:50:11.456Z",
-      "id": "aa477c9b-424c-4180-9484-5d655d481d89"
+      "deadline_date": "2024-07-01",
+      "last_status_update_date": "2024-06-27T15:17:13.778Z",
+      "id": "870b682c-e2e4-47a9-8113-a81b5b3b1691"
     }
   ]
 }
