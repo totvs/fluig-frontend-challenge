@@ -185,6 +185,11 @@ const setupSearchResultDropdown = () => {
     );
 
     try {
+      const searchIcon = searchButton.querySelector(".search-icon");
+      const searchSpinner = searchButton.querySelector(".search-spinner");
+      searchSpinner.classList.remove("d-none");
+      searchIcon.classList.add("d-none");
+
       const searchInput = document.querySelector(".search-input");
       const tasks = await taskApi.getTasksByTitle(searchInput.value);
 
@@ -192,6 +197,11 @@ const setupSearchResultDropdown = () => {
         searchResultDropdownList.textContent = "";
         searchResultDropdown.classList.toggle("hide");
       }
+      setTimeout(() => {
+        // only for demo purposes
+        searchSpinner.classList.add("d-none");
+        searchIcon.classList.remove("d-none");
+      }, 500);
 
       tasks.forEach((task) => {
         const itemList = buildSearchResultItem(task);
