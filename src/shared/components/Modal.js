@@ -1,5 +1,6 @@
 import * as bootstrap from "bootstrap";
 import "./date-input.js";
+import { getFormattedTaskDueDate } from "../../utils/ge-formatted-task-due-date.js";
 
 class Modal extends HTMLElement {
   constructor() {
@@ -223,18 +224,9 @@ class Modal extends HTMLElement {
     return dueDate === "";
   }
 
-  getFormattedTaskDueDate(dueDate) {
-    if (!dueDate) {
-      return "";
-    }
-    let endDatePart = dueDate.match(/T(\d{2}:\d{2})/);
-    let startDatePart = dueDate.match(/(\d{4}-\d{2}-\d{2})/);
-    return `${startDatePart[0].trim()}T${endDatePart[1].trim()}`;
-  }
-
   setTaskDueDate(dueDate) {
     const isEmptyDeadlineDate = this.isEmptyDeadlineDate(dueDate);
-    let formattedDueDate = this.getFormattedTaskDueDate(dueDate);
+    let formattedDueDate = getFormattedTaskDueDate(dueDate);
     console.log("formattedDueDate", formattedDueDate);
 
     this.taskDueDateInput.setAttribute(
