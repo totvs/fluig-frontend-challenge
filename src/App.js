@@ -217,6 +217,7 @@ const setupModal = () => {
     try {
       await taskApi.onTaskDeleted(taskId);
       if (resetTaskContainers()) await populateAllTasks();
+      showToastMessage("Tarefa excluída com sucesso!", "success");
     } catch (error) {
       showToastMessage(
         "Erro ao excluir a tarefa, tente novamente mais tarde.",
