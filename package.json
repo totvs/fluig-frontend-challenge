@@ -1,5 +1,5 @@
 {
-  "name": "my-webpack-project",
+  "name": "todo-list-vanilla-challenge",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,9 +11,9 @@
     "start": "webpack serve",
     "server": "npx json-server tasks.json --port 3000"
   },
-  "author": "",
+  "author": "Carlos Oliveira",
   "license": "ISC",
-  "description": "My webpack project",
+  "description": "This project is part of the technical challenge to build a Todo List with Vanilla JavaScript",
   "devDependencies": {
     "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",

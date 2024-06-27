@@ -1,13 +1,16 @@
-import TaskApi from "./core/infra/task-api.js";
 import { calculateDiffDaysFromDate } from "./utils/calculate-diff-days-from-date.js";
 import { showToastMessage } from "./core/infra/toast-alert.js";
 import {
   EventNotifierObservable,
   EventListenerObserver,
 } from "./core/notification/event-notifier-observable.js";
+import TasksHttpGateway from "./core/gateways/tasks-http-gateway.js";
+import FetchAdapter from "./core/infra/fetch-adapter.js";
 
 const eventNotifierObservable = new EventNotifierObservable();
-const taskApi = new TaskApi();
+const fetchAdapter = new FetchAdapter();
+const tasksHttpGateway = new TasksHttpGateway(fetchAdapter);
+
 let taskId;
 
 const resetTaskContainers = () => {
@@ -122,7 +125,7 @@ const populateAllTasks = async () => {
   let doneList = [];
 
   try {
-    const tasks = await taskApi.getAllTasks();
+    const tasks = await tasksHttpGateway.getAllTasks();
     tasks.forEach((task) => {
       const card = buildTaskCard(task);
       if (task.status === 0) {
@@ -191,7 +194,7 @@ const setupSearchResultDropdown = () => {
       searchIcon.classList.add("d-none");
 
       const searchInput = document.querySelector(".search-input");
-      const tasks = await taskApi.getTasksByTitle(searchInput.value);
+      const tasks = await tasksHttpGateway.getTasksByTitle(searchInput.value);
 
       if (tasks.length !== 0) {
         searchResultDropdownList.textContent = "";
@@ -226,7 +229,7 @@ const setupModal = () => {
   formAppModalComponent.addEventListener("onTaskDeleted", async () => {
     formAppModalComponent.showExcludeButtonSpinner();
     try {
-      await taskApi.onTaskDeleted(taskId);
+      await tasksHttpGateway.onTaskDeleted(taskId);
       if (resetTaskContainers()) await populateAllTasks();
       showToastMessage("Tarefa excluída com sucesso!", "success");
       setTimeout(() => {
@@ -254,7 +257,7 @@ const setupModal = () => {
             ...task,
             id: taskId,
           };
-          await taskApi.updateTask(preparedTask);
+          await tasksHttpGateway.updateTask(preparedTask);
           showToastMessage("Tarefa atualizada com sucesso!", "success");
           setTimeout(() => {
             // only for demo purposes
@@ -272,7 +275,7 @@ const setupModal = () => {
             ...task,
             id: crypto.randomUUID(),
           };
-          await taskApi.addTask(preparedTask);
+          await tasksHttpGateway.addTask(preparedTask);
           showToastMessage("Tarefa criada com sucesso!", "success");
           setTimeout(() => {
             // only for demo purposes
