@@ -14,14 +14,14 @@
             class="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="collapse navbar-collapse" id="navbarContent">
             <div class="me-auto"></div>
             <form class="d-flex" role="search">
               <div class="input-group">
@@ -31,10 +31,7 @@
                   placeholder="Pesquisar..."
                   aria-label="Search"
                 />
-                <button
-                  class="btn btn-primary search-button"
-                  type="submit"
-                >
+                <button class="btn btn-primary search-button" type="submit">
                   <span><i class="bi-search"></i></span>
                   Buscar
                 </button>
@@ -42,6 +39,7 @@
               <!-- search-result-dropdown -->
               <div class="search-result-dropdown hide">
                 <span>Tarefas encontradas</span>
+                <ul class="search-result-dropdown-list"></ul>
               </div>
               <!-- search-result-dropdown -->
             </form>
@@ -105,6 +103,24 @@
         </div>
       </div>
       <app-modal-component title="Nova tarefa"></app-modal-component>
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div
+          class="toast-component toast align-items-center border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div class="toast-body text-white">Erro ao carregar tarefas, tente mais tarde...</div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

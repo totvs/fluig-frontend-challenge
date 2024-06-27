@@ -1,5 +1,6 @@
 import TaskApi from "./core/infra/TaskApi.js";
 import { calculateDiffDaysFromDate } from "./utils/calculate-diff-days-from-date.js";
+import * as bootstrap from "bootstrap";
 
 const taskApi = new TaskApi();
 let taskId;
@@ -83,79 +84,106 @@ const populateAllTasks = async () => {
   let doingList = [];
   let doneList = [];
 
-  const tasks = await taskApi.getAllTasks();
-  tasks.forEach((task) => {
-    const card = buildTaskCard(task);
-    if (task.status === 0) {
-      toDoList.push(card);
-    } else if (task.status === 1) {
-      doingList.push(card);
-    } else if (task.status === 2) {
-      doneList.push(card);
-    }
-  });
+  try {
+    const tasks = await taskApi.getAllTasks();
+    tasks.forEach((task) => {
+      const card = buildTaskCard(task);
+      if (task.status === 0) {
+        toDoList.push(card);
+      } else if (task.status === 1) {
+        doingList.push(card);
+      } else if (task.status === 2) {
+        doneList.push(card);
+      }
+    });
 
-  populateToDoListContainer(toDoList);
-  populateDoingListContainer(doingList);
-  populateDoneListContainer(doneList);
+    populateToDoListContainer(toDoList);
+    populateDoingListContainer(doingList);
+    populateDoneListContainer(doneList);
 
-  setTotalTaskByColumn(".todo-tasks-total-text", toDoList.length);
-  setTotalTaskByColumn(".doing-tasks-total-text", doingList.length);
-  setTotalTaskByColumn(".completed-tasks-total-text", doneList.length);
+    setTotalTaskByColumn(".todo-tasks-total-text", toDoList.length);
+    setTotalTaskByColumn(".doing-tasks-total-text", doingList.length);
+    setTotalTaskByColumn(".completed-tasks-total-text", doneList.length);
+  } catch (error) {
+    showToastMessage(
+      "Erro ao carregar as tarefas, tente novamente mais tarde.",
+      "danger"
+    );
+  }
 };
 
-const setupSearchResultDropdown = (tasks) => {
+const handleOnMouseLeaveSearchResultDropdown = (event) => {
+  event.target.classList.add("hide");
+};
+
+const setupSearchResultDropdown = () => {
   const searchResultDropdown = document.querySelector(
     ".search-result-dropdown"
   );
-  const searchResultDropdownList = document.createElement("ul");
-  searchResultDropdown.appendChild(searchResultDropdownList);
-
-  const searchInput = document.querySelector("input[type='search']");
-  searchInput.addEventListener("onfocusout", async (event) => {
-    console.log("focus");
-  });
+  searchResultDropdown.addEventListener(
+    "mouseleave",
+    handleOnMouseLeaveSearchResultDropdown
+  );
 
   const searchButton = document.querySelector(".search-button");
   searchButton.addEventListener("click", async (event) => {
     event.preventDefault();
 
-    const tasks = await taskApi.getTasksByTitle(searchInput.value);
-    searchResultDropdownList.textContent = "";
+    const searchResultDropdownList = document.querySelector(
+      ".search-result-dropdown-list"
+    );
 
-    if (tasks.length !== 0) {
-      searchResultDropdown.classList.toggle("hide");
-    }
+    try {
+      const searchInput = document.querySelector(".search-input");
+      const tasks = await taskApi.getTasksByTitle(searchInput.value);
+      searchResultDropdownList.textContent = "";
 
-    tasks.forEach((task) => {
-      const itemList = document.createElement("li");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = task.title;
-      button.addEventListener("click", async (event) => {
+      if (tasks.length !== 0) {
         searchResultDropdown.classList.toggle("hide");
-        taskId = task.id;
-        const formAppModalComponent = document.querySelector(
-          "app-modal-component"
-        );
-        formAppModalComponent.openModal(
-          taskId,
-          task.title,
-          task.description,
-          task.deadline_date
-        );
+      }
+
+      tasks.forEach((task) => {
+        const itemList = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = task.title;
+        button.addEventListener("click", async (event) => {
+          searchResultDropdown.classList.toggle("hide");
+          taskId = task.id;
+          const formAppModalComponent = document.querySelector(
+            "app-modal-component"
+          );
+          formAppModalComponent.openModal(
+            taskId,
+            task.title,
+            task.description,
+            task.deadline_date
+          );
+        });
+        itemList.appendChild(button);
+        searchResultDropdownList.appendChild(itemList);
       });
-      itemList.appendChild(button);
-      searchResultDropdownList.appendChild(itemList);
-    });
+    } catch (error) {
+      showToastMessage(
+        "Erro ao pesquisar as tarefas, tente mais tarde.",
+        "danger"
+      );
+    }
   });
 };
 
 const setupModal = () => {
   const formAppModalComponent = document.querySelector("app-modal-component");
-  formAppModalComponent.addEventListener("onTaskDeleted", async (event) => {
-    await taskApi.onTaskDeleted(taskId);
-    if (resetTaskContainers()) await populateAllTasks();
+  formAppModalComponent.addEventListener("onTaskDeleted", async () => {
+    try {
+      await taskApi.onTaskDeleted(taskId);
+      if (resetTaskContainers()) await populateAllTasks();
+    } catch (error) {
+      showToastMessage(
+        "Erro ao excluir a tarefa, tente novamente mais tarde.",
+        "danger"
+      );
+    }
   });
 
   formAppModalComponent.addEventListener(
@@ -164,23 +192,36 @@ const setupModal = () => {
       const task = event.detail;
       let preparedTask;
 
-      if (taskId) {
-        preparedTask = {
-          ...task,
-          id: taskId,
-        };
-        await taskApi.updateTask(preparedTask);
-      } else {
-        preparedTask = {
-          ...task,
-          id: crypto.randomUUID(),
-        };
-        await taskApi.addTask(preparedTask);
+      try {
+        if (taskId) {
+          preparedTask = {
+            ...task,
+            id: taskId,
+          };
+          await taskApi.updateTask(preparedTask);
+        } else {
+          preparedTask = {
+            ...task,
+            id: crypto.randomUUID(),
+          };
+          await taskApi.addTask(preparedTask);
+        }
+        if (resetTaskContainers()) await populateAllTasks();
+      } catch (error) {
+        showToastMessage(
+          "Erro ao salvar a tarefa, tente novamente mais tarde."
+        );
       }
-
-      if (resetTaskContainers()) await populateAllTasks();
     }
   );
+};
+
+const showToastMessage = (message, type = "success") => {
+  const toastComponent = document.querySelector(".toast-component");
+  toastComponent.classList.add(`text-bg-${type}`);
+  toastComponent.querySelector(".toast-body").textContent = message;
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastComponent);
+  toastBootstrap.show();
 };
 
 export const bootstrapApp = async () => {
