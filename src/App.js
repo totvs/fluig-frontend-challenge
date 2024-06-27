@@ -44,7 +44,7 @@ const buildTaskCard = (task) => {
   const taskCard = document.createElement("app-task-card");
   taskCard.setAttribute("title", task.title);
   taskCard.setAttribute("description", task.description);
-  taskCard.setAttribute("deadline", task.deadline_date || task.created_date);
+  taskCard.setAttribute("deadline", task.deadline_date);
   const calculateParkingDaysAtColumn = calculateDiffDaysFromDate(
     task.created_date
   );
@@ -198,7 +198,6 @@ const setupSearchResultDropdown = () => {
         searchResultDropdownList.appendChild(itemList);
       });
     } catch (error) {
-      console.log(error);
       showToastMessage(
         "Erro ao pesquisar as tarefas, tente mais tarde.",
         "danger"
@@ -209,6 +208,11 @@ const setupSearchResultDropdown = () => {
 
 const setupModal = () => {
   const formAppModalComponent = document.querySelector("app-modal-component");
+
+  formAppModalComponent.addEventListener("onCloseModal", () => {
+    taskId = null;
+  });
+
   formAppModalComponent.addEventListener("onTaskDeleted", async () => {
     try {
       await taskApi.onTaskDeleted(taskId);
@@ -227,26 +231,37 @@ const setupModal = () => {
       const task = event.detail;
       let preparedTask;
 
-      try {
-        if (taskId) {
+      if (taskId) {
+        try {
           preparedTask = {
             ...task,
             id: taskId,
           };
+          console.log("preparedTask", preparedTask);
           await taskApi.updateTask(preparedTask);
-        } else {
+          showToastMessage("Tarefa atualizada com sucesso!", "success");
+        } catch (error) {
+          showToastMessage(
+            "Erro ao atualizar a tarefa, tente novamente mais tarde.",
+            "danger"
+          );
+        }
+      } else {
+        try {
           preparedTask = {
             ...task,
             id: crypto.randomUUID(),
           };
           await taskApi.addTask(preparedTask);
+          showToastMessage("Tarefa criada com sucesso!", "success");
+        } catch (error) {
+          showToastMessage(
+            "Erro ao salvar a tarefa, tente novamente mais tarde.",
+            "danger"
+          );
         }
-        if (resetTaskContainers()) await populateAllTasks();
-      } catch (error) {
-        showToastMessage(
-          "Erro ao salvar a tarefa, tente novamente mais tarde."
-        );
       }
+      if (resetTaskContainers()) await populateAllTasks();
     }
   );
 };

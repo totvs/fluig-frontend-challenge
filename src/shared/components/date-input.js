@@ -8,7 +8,7 @@ class DateInput extends HTMLElement {
     this.shadow = this.attachShadow({ mode: "open" });
     this.input = document.createElement("input");
     this.input.classList.add("form-control");
-    this.input.type = "date";
+    this.input.type = "datetime-local";
     this.shadow.appendChild(this.input);
 
     const style = document.createElement("style");

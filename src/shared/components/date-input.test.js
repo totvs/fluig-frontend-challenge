@@ -9,7 +9,7 @@ describe("DateInput", () => {
 
   beforeEach(() => {
     document.body.innerHTML = `
-      <date-input name="dueDate" value="2024-04-17" placeholder="17/07/2024"></date-input>
+      <date-input name="dueDate" value="2024-04-17T00:00" placeholder="17/07/2024"></date-input>
     `;
     dateInput = document.querySelector("date-input");
   });
@@ -19,7 +19,7 @@ describe("DateInput", () => {
   });
 
   it("should render the a value to the date input", () => {
-    expect(dateInput.input.value).toBe("2024-04-17");
+    expect(dateInput.input.value).toBe("2024-04-17T00:00");
   });
 
   it("should render the a name to the date input", () => {
