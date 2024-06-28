@@ -1,0 +1,81 @@
+@use "sass:map";
+
+@import "theme.scss";
+
+.search-result-dropdown {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  text-align: start;
+  
+
+  span {
+    margin-top: 15px;
+    display: block;
+    font-size: 15px;
+    margin-left: 15px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  &.show {
+    display: block;
+  }
+
+  &.hide {
+    display: none;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 15px;
+  }
+
+  li {
+    button {
+      cursor: pointer;
+      width: 100%;
+      border: none;
+      background-color: transparent;
+      padding: 5px;
+      text-align: start;
+      font-size: 14px;
+      color: #333;
+      opacity: 0.8;
+      text-transform: capitalize;
+      padding-left: 15px;
+
+      &:hover {
+        background-color: map.get($theme-colors, "primary");;
+        opacity: 0.8;
+        color: #fff;
+      }
+  
+      &:focus {
+        outline: none;
+      }
+  
+      &:active {
+        background-color: #ddd;
+      }
+    }
+  }
+}
+
+#navbarContent {
+  form {
+    position: relative;
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-top: 20px;
+  }
+}

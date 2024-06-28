@@ -1,0 +1,48 @@
+{
+  "name": "todo-list-vanilla-challenge",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch",
+    "start": "webpack serve",
+    "start:dev": "npm run server & npm run start",
+    "server": "npx json-server tasks.json --port 3000",
+    "lint": "npx eslint ./src"
+  },
+  "author": "Carlos Oliveira",
+  "license": "ISC",
+  "description": "This project is part of the technical challenge to build a Todo List with Vanilla JavaScript",
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@eslint/js": "^9.5.0",
+    "@webcomponents/webcomponentsjs": "^2.8.0",
+    "@webpack-cli/generators": "^3.0.7",
+    "autoprefixer": "^10.4.19",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.5.0",
+    "globals": "^15.6.0",
+    "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "postcss-loader": "^8.1.1",
+    "prettier": "^3.3.2",
+    "sass": "^1.77.6",
+    "sass-loader": "^14.2.1",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "@types/jest": "^29.5.12",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "json-server": "^1.0.0-beta.1"
+  }
+}
