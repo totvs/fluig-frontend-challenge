@@ -9,7 +9,7 @@ class Modal extends HTMLElement {
 
     this.disabledTaskDueDate = true;
     this._taskId;
-    this._taskDueDate;
+    this._taskDueDate = "";
 
     const titleProperty = this.getAttribute("title");
 
@@ -134,23 +134,33 @@ class Modal extends HTMLElement {
   }
 
   validateForm(formData) {
-    if (!this.disabledTaskDueDate && this._taskDueDate?.trim() == "") {
-      this.taskDueDateInput.setAttribute("valid", "false");
-      return false;
-    } else if (formData.get("task-name").trim() === "") {
-      const nameInput = this.taskNameField;
-      nameInput.classList.add("is-invalid");
-      return false;
-    } else if (formData.get("task-description").trim() === "") {
-      const descriptionInput = this.descriptionField;
-      descriptionInput.classList.add("is-invalid");
-      return false;
+    const isEmptyTaskName = formData.get("task-name")?.trim() === "";
+    const isEmptyTaskDescription =
+      formData.get("task-description")?.trim() === "";
+    const isEmptyDueDate =
+      !this.disabledTaskDueDate && this._taskDueDate.trim() === "";
+
+    isEmptyTaskName
+      ? this.taskNameField.classList.add("is-invalid")
+      : this.taskNameField.classList.remove("is-invalid");
+
+    isEmptyTaskDescription
+      ? this.descriptionField.classList.add("is-invalid")
+      : this.descriptionField.classList.remove("is-invalid");
+
+    isEmptyDueDate
+      ? this.taskDueDateInput.setAttribute("valid", "false")
+      : this.taskDueDateInput.removeAttribute("valid");
+
+    const valid =
+      !isEmptyTaskName && !isEmptyTaskDescription && !isEmptyDueDate;
+
+    if (valid) {
+      this.taskNameField.classList.remove("is-invalid");
+      this.descriptionField.classList.remove("is-invalid");
     }
 
-    this.taskNameField.classList.remove("is-invalid");
-    this.descriptionField.classList.remove("is-invalid");
-
-    return true;
+    return valid;
   }
 
   handleOnClickSaveButton(event) {
@@ -238,6 +248,7 @@ class Modal extends HTMLElement {
       "disabled",
       !isEmptyDeadlineDate ? "" : "disabled"
     );
+
     this.taskDueDateInput.setAttribute("value", formattedDueDate || "");
     this._taskDueDate = dueDate;
     this.disabledTaskDueDate = isEmptyDeadlineDate;
