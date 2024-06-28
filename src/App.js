@@ -40,7 +40,7 @@ const openModalByTask = (task) => {
     task.id,
     task.title,
     task.description,
-    task.deadline_date
+    task.deadline
   );
 };
 
