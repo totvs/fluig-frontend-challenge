@@ -1,15 +1,15 @@
 # 🚀 Welcome to your new awesome project!
 
-This project has been created using **webpack-cli**, you can now run
+This project was created using **webpack-cli**, now you can run it. It is part of a technical challenge for a position as Front-end Developer.
 
 ```
-npm run build
+npm run start:dev
 ```
 
 or
 
 ```
-yarn build
+yarn run start:dev
 ```
 
 to bundle your application
